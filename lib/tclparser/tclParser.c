@@ -19,6 +19,15 @@
 
 #include <tclInt.h>
 
+
+#if TCL_MAJOR_VERSION < 9
+#ifdef Tcl_Size
+#undef Tcl_Size
+#endif
+typedef int Tcl_Size;
+#define Tcl_GetSizeIntFromObj Tcl_GetIntFromObj
+#endif
+
 /*
  * TCL_TOKEN_EXPAND_WORD is new in 8.5, but it's safe to define it
  * when building in earlier releases, and a version of tclparser
@@ -52,36 +61,36 @@ static char packageVersion[] = PACKAGE_VERSION;
 #define TCL_STORAGE_CLASS DLLEXPORT
 #endif
 
-EXTERN int Tclparser_Init _ANSI_ARGS_((Tcl_Interp *interp));
+EXTERN int Tclparser_Init (Tcl_Interp *interp);
 
-static int	ParseMakeTokenList _ANSI_ARGS_((char *script,
-		    Tcl_Parse *parsePtr, int index, Tcl_Obj **resultPtr));
-static Tcl_Obj *ParseMakeRange _ANSI_ARGS_((char *script, CONST char *start,
-		    int end));
-static int	ParseObjCmd _ANSI_ARGS_((ClientData clientData,
-		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]));
-static void	ParseSetErrorCode _ANSI_ARGS_((Tcl_Interp *interp,
-		    char *script, Tcl_Parse *parsePtr));
-static int	ParseCommand _ANSI_ARGS_((Tcl_Interp *interp, char *script, 
-		    int index, int length));
-static int	ParseExpr _ANSI_ARGS_((Tcl_Interp *interp, char *script, 
-		    int index, int length));
-static int	ParseList _ANSI_ARGS_((Tcl_Interp *interp, char *script, 
-		    int index, int length));
-static int	ParseVarName _ANSI_ARGS_((Tcl_Interp *interp, char *script, 
-		    int index, int length));
-static int	ParseGetString _ANSI_ARGS_((Tcl_Interp *interp, char *script, 
-		    int index, int length));
-static int	ParseCharIndex _ANSI_ARGS_((Tcl_Interp *interp, char *script,
-		    int index, int length));
-static int	ParseCharLength _ANSI_ARGS_((Tcl_Interp *interp, char *script,
-		    int index, int length));
-static int	ParseCountNewline _ANSI_ARGS_((Tcl_Interp *interp,
-		    char *script, int scriptLength, Tcl_Obj *rangePtr1,
-		    Tcl_Obj *rangePtr2));
-static int	ParseGetIndexAndLength _ANSI_ARGS_((Tcl_Interp *interp, 
-		    Tcl_Obj *rangePtr, int scriptLen, int *index,
-		    int *length));
+static int	ParseMakeTokenList (char *script,
+		    Tcl_Parse *parsePtr, int index, Tcl_Obj **resultPtr);
+static Tcl_Obj *ParseMakeRange (char *script, CONST char *start,
+		    int end);
+static int	ParseObjCmd (ClientData clientData,
+		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static void	ParseSetErrorCode (Tcl_Interp *interp,
+		    char *script, Tcl_Parse *parsePtr);
+static int	ParseCommand (Tcl_Interp *interp, char *script, 
+		    int index, int length);
+static int	ParseExpr (Tcl_Interp *interp, char *script, 
+		    int index, int length);
+static int	ParseList (Tcl_Interp *interp, char *script, 
+		    int index, int length);
+static int	ParseVarName (Tcl_Interp *interp, char *script, 
+		    int index, int length);
+static int	ParseGetString (Tcl_Interp *interp, char *script, 
+		    int index, int length);
+static int	ParseCharIndex (Tcl_Interp *interp, char *script,
+		    int index, int length);
+static int	ParseCharLength (Tcl_Interp *interp, char *script,
+		    int index, int length);
+static int	ParseCountNewline (Tcl_Interp *interp,
+		    char *script, Tcl_Size scriptLength, Tcl_Obj *rangePtr1,
+		    Tcl_Obj *rangePtr2);
+static int	ParseGetIndexAndLength (Tcl_Interp *interp, 
+		    Tcl_Obj *rangePtr, Tcl_Size scriptLen, Tcl_Size *index,
+		    Tcl_Size *length);
 
 /*
  *----------------------------------------------------------------------
@@ -133,7 +142,8 @@ ParseObjCmd(dummy, interp, objc, objv)
     int objc;			/* Number of arguments. */
     Tcl_Obj *CONST objv[];	/* Argument objects. */
 {
-    int option, index, length, scriptLength;
+    int option;
+    Tcl_Size index, length, scriptLength;
     char *script;
 
     static const char *options[] = {
@@ -169,10 +179,10 @@ ParseObjCmd(dummy, interp, objc, objv)
 		index = 0;
 		length = scriptLength;
 	    } else if (objc == 5) {
-		if (Tcl_GetIntFromObj(interp, objv[3], &index) != TCL_OK) {
+		if (Tcl_GetSizeIntFromObj(interp, objv[3], &index) != TCL_OK) {
 		    return TCL_ERROR;
 		}
-		if (Tcl_GetIntFromObj(interp, objv[4], &length) != TCL_OK) {
+		if (Tcl_GetSizeIntFromObj(interp, objv[4], &length) != TCL_OK) {
 		    return TCL_ERROR;
 		}
 		if (index < 0) {
@@ -387,7 +397,7 @@ ParseList(interp, script, index, length)
     int length;			/* Byte length of script be parsed. */
 {
     Tcl_Obj *resultPtr;
-    int size;
+    Tcl_Size size;
     char c;
     CONST char *list, *element, *prevList, *last;
 
@@ -793,9 +803,9 @@ ParseCountNewline(interp, script, scriptLength, rangePtr1, rangePtr2)
     Tcl_Obj *resultPtr;
     char *subStr;
     char *endStr;
-    int offset, index1, index2;
-    int  length, length1, length2;
-    int  listLen1, listLen2;
+    Tcl_Size offset, index1, index2;
+    Tcl_Size  length, length1, length2;
+    Tcl_Size  listLen1, listLen2;
     int  numNewline;
 
     if (Tcl_ListObjLength(interp, rangePtr1, &listLen1) != TCL_OK) {
@@ -896,15 +906,15 @@ static int
 ParseGetIndexAndLength(interp, rangePtr, scriptLen, indexPtr, lengthPtr)
     Tcl_Interp *interp;	    /* Current interpreter. */
     Tcl_Obj    *rangePtr;
-    int scriptLen;	    /* Length of script.  If >= 0, then try 
+    Tcl_Size scriptLen;	    /* Length of script.  If >= 0, then try 
 			     * to normalize index and length based
 			     * on the length of the script. */
-    int *indexPtr;	    /* Index to the starting point of the 
+    Tcl_Size *indexPtr;	    /* Index to the starting point of the 
 			     * script. */
-    int *lengthPtr;	    /* Byte length of script be parsed. */ 
+    Tcl_Size *lengthPtr;    /* Byte length of script be parsed. */ 
 {
     Tcl_Obj *itemPtr;
-    int listLen;
+    Tcl_Size listLen;
 
     if (Tcl_ListObjLength(interp, rangePtr, &listLen) != TCL_OK) {
 	return TCL_ERROR;
@@ -931,12 +941,12 @@ ParseGetIndexAndLength(interp, rangePtr, scriptLen, indexPtr, lengthPtr)
 	*indexPtr = 0;
 	*lengthPtr = scriptLen;
     } else {
-	int len;
+	Tcl_Size len;
 	char *bytes;
 	if (Tcl_ListObjIndex(interp, rangePtr, 0, &itemPtr) != TCL_OK) {
 	    return TCL_ERROR;
 	}
-	if (Tcl_GetIntFromObj(interp, itemPtr, indexPtr) != TCL_OK) {
+	if (Tcl_GetSizeIntFromObj(interp, itemPtr, indexPtr) != TCL_OK) {
 	    return TCL_ERROR;
 	}
 	if (Tcl_ListObjIndex(interp, rangePtr, 1, &itemPtr) != TCL_OK) {
@@ -946,7 +956,7 @@ ParseGetIndexAndLength(interp, rangePtr, scriptLen, indexPtr, lengthPtr)
 	if ((*bytes == 'e')
 		&& (strncmp(bytes, "end", (unsigned) len) == 0)) {
 	    *lengthPtr = scriptLen;
-	} else if (Tcl_GetIntFromObj(interp, itemPtr, lengthPtr) != TCL_OK) {
+	} else if (Tcl_GetSizeIntFromObj(interp, itemPtr, lengthPtr) != TCL_OK) {
 	    return TCL_ERROR;
 	}
 	if (scriptLen >= 0) {
