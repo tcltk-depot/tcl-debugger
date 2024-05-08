@@ -25,6 +25,8 @@ if {![regexp parse [info commands parse]]} {
 }
 
 testConstraint noExpand [catch {concat {*}{foo bar}}]
+testConstraint tcl8 [expr {![package vsatisfies [package require Tcl] 9-]}]
+testConstraint tcl9 [expr {[package vsatisfies [package require Tcl] 9-]}]
 
 test parseCmd-2.1 {ParseCommand} {
     list [catch {parse command {set x {foo}z} {}} msg] $msg $errorCode
@@ -54,9 +56,12 @@ test parseCmd-3.7 {ParseSetErrorCode} {
 test parseCmd-3.8 {ParseSetErrorCode} {
     list [catch {parse expr {3+err} {}} msg] [lrange $errorCode 0 1]
 } {1 {PARSE syntax}}
-test parseCmd-3.9 {ParseSetErrorCode} {
+test parseCmd-3.9.tcl8 {ParseSetErrorCode} -constraints tcl8 -body {
     list [catch {parse expr {08} {}} msg] [lrange $errorCode 0 1]
-} {1 {PARSE badNumber}}
+} -result {1 {PARSE badNumber}}
+test parseCmd-3.9.tcl9 {ParseSetErrorCode} -constraints tcl9 -body {
+    list [catch {parse expr {0o8} {}} msg] [lrange $errorCode 0 1]
+} -result {1 {PARSE badNumber}}
 test parseCmd-3.10 {ParseSetErrorCode} {
     list [catch {parse expr {} {}} msg] [lrange $errorCode 0 2]
 } {1 {PARSE syntax 0}}
