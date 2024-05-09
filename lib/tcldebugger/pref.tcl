@@ -660,7 +660,7 @@ proc pref::PrefGetUpdateCmd {group pref} {
 #	None.
 
 proc pref::SetSaveMsg {msg} {
-    set pref::groupSaveMsg $msg
+    set ::pref::groupSaveMsg $msg
     return
 }
 
@@ -675,7 +675,7 @@ proc pref::SetSaveMsg {msg} {
 #	The cached message.
 
 proc pref::GetSaveMsg {} {
-    return $pref::groupSaveMsg
+    return $::pref::groupSaveMsg
 }
 
 # pref::SetRestoreMsg --
@@ -689,7 +689,7 @@ proc pref::GetSaveMsg {} {
 #	None.
 
 proc pref::SetRestoreMsg {msg} {
-    set pref::groupRestoreMsg $msg
+    set ::pref::groupRestoreMsg $msg
     return
 }
 
@@ -704,6 +704,6 @@ proc pref::SetRestoreMsg {msg} {
 #	The cached message.
 
 proc pref::GetRestoreMsg {} {
-    return $pref::groupRestoreMsg
+    return $::pref::groupRestoreMsg
 }
 

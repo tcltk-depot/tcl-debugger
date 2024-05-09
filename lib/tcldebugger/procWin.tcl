@@ -51,16 +51,16 @@ namespace eval procWin {
 #	The name of the Proc Windows toplevel.
 
 proc procWin::showWindow {} {
-    set top $gui::gui(procDbgWin)
+    set top $::gui::gui(procDbgWin)
     if {[winfo exists $top]} {
 	procWin::updateWindow
 	wm deiconify $top
-	focus $procWin::procText
+	focus $::procWin::procText
 	return $top
     } else {
 	procWin::createWindow
 	procWin::updateWindow
-	focus $procWin::procText
+	focus $::procWin::procText
 	return $top
     }
 }
@@ -86,11 +86,11 @@ proc procWin::createWindow {} {
     variable patValue
     variable showChk
 
-    set top [toplevel $gui::gui(procDbgWin)]
+    set top [toplevel $::gui::gui(procDbgWin)]
     ::guiUtil::positionWindow $top 400x260
     wm minsize $top 175 100
     wm title $top "Procedures"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     set bd 2
     set pad  6
@@ -128,7 +128,7 @@ proc procWin::createWindow {} {
     set uninstruBut [button $butFrm.uninstruBut -text "Uninstrument" \
 	    -command [list procWin::instrument 0 $procText]]
     set closeBut [button $butFrm.closeBut -text "Close" \
-	    -command {destroy $gui::gui(procDbgWin)}]
+	    -command {destroy $::gui::gui(procDbgWin)}]
     pack $showBut $instruBut $uninstruBut $closeBut -fill x -pady 3
 
     grid $patLbl -row 0 -column 0 -sticky we -pady $pad
@@ -156,10 +156,10 @@ proc procWin::createWindow {} {
     gui::setDbgTextBindings $procText $sb
 
     sel::setWidgetCmd $procText all {
-	procWin::checkState $procWin::procText
+	procWin::checkState $::procWin::procText
     }
     bind procDbgWin <<Dbg_ShowCode>> {
-	procWin::showCode $procWin::procText
+	procWin::showCode $::procWin::procText
 	break
     }
     bind $procText <Double-1> {
@@ -202,7 +202,7 @@ proc procWin::updateWindow {{preserve 0}} {
     variable afterID
     variable patValue
 
-    if {![winfo exists $gui::gui(procDbgWin)]} {
+    if {![winfo exists $::gui::gui(procDbgWin)]} {
 	return
     }
 
@@ -222,7 +222,7 @@ proc procWin::updateWindow {{preserve 0}} {
     set state [gui::getCurrentState]
     if {$state != "stopped"} {
 	if {$state == "running"} {
-	    set afterID [after $gui::afterTime ::procWin::resetWindow]
+	    set afterID [after $::gui::afterTime ::procWin::resetWindow]
 	} else {
 	    procWin::resetWindow
 	}
@@ -262,7 +262,7 @@ proc procWin::updateWindow {{preserve 0}} {
 	}
 	if {($loc != {}) && [blk::isInstrumented [loc::getBlock $loc]]} {
 	    $procText insert end "  $name\n" procName
-	} elseif {$procWin::showChkVar} {
+	} elseif {$::procWin::showChkVar} {
 	    $procText insert end "* $name\n" procName
 	}
     }
@@ -297,13 +297,13 @@ proc procWin::resetWindow {{msg {}}} {
     variable procCache    
     variable procText
     
-    if {![winfo exists $gui::gui(procDbgWin)]} {
+    if {![winfo exists $::gui::gui(procDbgWin)]} {
 	return
     }
 
-    $procWin::showChk configure -state disabled
-    $procWin::patEnt configure -state disabled
-    $procWin::patBut configure -state disabled
+    $::procWin::showChk configure -state disabled
+    $::procWin::patEnt configure -state disabled
+    $::procWin::patBut configure -state disabled
 
     if {[info exists procCache]} {
 	unset procCache
@@ -504,21 +504,21 @@ proc procWin::checkState {text} {
 	}
     }
     if {$inst} {
-	$procWin::instruBut configure -state normal
+	$::procWin::instruBut configure -state normal
     } else {
-	$procWin::instruBut configure -state disabled
+	$::procWin::instruBut configure -state disabled
     }
     if {$uninst} {
-	$procWin::uninstruBut configure -state normal
+	$::procWin::uninstruBut configure -state normal
     } else {
-	$procWin::uninstruBut configure -state disabled
+	$::procWin::uninstruBut configure -state disabled
     }
 
     set cursor [sel::getCursor $text]
     if {[lsearch -exact [$procText tag names $cursor.0] procName] < 0} {
-	$procWin::showBut configure -state disabled
+	$::procWin::showBut configure -state disabled
     } else {
-	$procWin::showBut configure -state normal
+	$::procWin::showBut configure -state normal
     }
 
     if {[focus] == $procText} {

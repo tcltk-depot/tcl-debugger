@@ -806,12 +806,12 @@ proc instrument::parseScript {{scriptRange {}}} {
 		comment cmdRange tail tree}]} {
 	    # An error occurred during parsing.
 
-	    if {$instrument::errorHandler != ""} {
+	    if {$::instrument::errorHandler != ""} {
 		pushContext
 		setLocation [list [lindex $::errorCode 2] 1]
 		set location [getLocation]
 		popContext
-		if {[$instrument::errorHandler $location]} {
+		if {[$::instrument::errorHandler $location]} {
 		    # Ignore the error and wrap the rest of the script
 		    # as a single statement.
 		    
@@ -850,7 +850,7 @@ proc instrument::parseScript {{scriptRange {}}} {
 		incr index
 		set cmdName [string trimleft $cmdName :]
 		if {[info exists instrument::handler($cmdName)]} {
-		    set index [eval $instrument::handler($cmdName) \
+		    set index [eval $::instrument::handler($cmdName) \
 			    {$tree $index}]
 		} else {
 		    set index [parseCommand $tree $index]
@@ -1298,12 +1298,12 @@ proc instrument::parseExpr {tokens index} {
     if {[catch {parse expr $::instrument::script $range} tree]} {
 	# An error occurred during parsing.
 
-	if {$instrument::errorHandler != ""} {
+	if {$::instrument::errorHandler != ""} {
 	    pushContext
 	    setLocation [list [lindex $::errorCode 2] 1]
 	    set location [getLocation]
 	    popContext
-	    if {[$instrument::errorHandler $location]} {
+	    if {[$::instrument::errorHandler $location]} {
 		# Ignore the error and just parse the expression as
 		# a normal word.
 		return [parseWord $tokens $index]
@@ -1351,12 +1351,12 @@ proc instrument::parseIncr22Class {range} {
 		comment cmdRange tail tree}]} {
 	    # An error occurred during parsing.
 
-	    if {$instrument::errorHandler != ""} {
+	    if {$::instrument::errorHandler != ""} {
 		pushContext
 		setLocation [list [lindex $::errorCode 2] 1]
 		set location [getLocation]
 		popContext
-		if {[$instrument::errorHandler $location]} {
+		if {[$::instrument::errorHandler $location]} {
 		    # Ignore the error and skip to the end of the statement.
 		    
 		    if {!$first} {
@@ -2102,12 +2102,12 @@ proc instrument::parseExpRange {tokens index} {
 		[parse command $script $range] {}}]} {
 	    # An error occurred during parsing so generate the error.
 
-	    if {$instrument::errorHandler != ""} {
+	    if {$::instrument::errorHandler != ""} {
 		pushContext
 		setLocation [list [lindex $::errorCode 2] 1]
 		set location [getLocation]
 		popContext
-		if {[$instrument::errorHandler $location]} {
+		if {[$::instrument::errorHandler $location]} {
 		    # Ignore the error and treat the rest of the range
 		    # as a single token
 		    return [list [list simple $range \

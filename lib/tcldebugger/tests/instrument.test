@@ -72,23 +72,23 @@ test instrument-2.1 {instrument::initialize, incrTcl 3.0} {
     resetExtensions
     instrument::extension incrTcl 1
     instrument::initialize 8.0
-    foreach {name ver body} $instrument::incrTclCmds {
+    foreach {name ver body} $::instrument::incrTclCmds {
 	if {$name == "class" && $ver == "3.0"} {
 	    break
 	}
     }
-    string compare $instrument::handler(class) $body
+    string compare $::instrument::handler(class) $body
 } 0
 test instrument-2.2 {instrument::initialize, incrTcl 2.2} {
     resetExtensions
     instrument::extension incrTcl 1
     instrument::initialize 7.6
-    foreach {name ver body} $instrument::incrTclCmds {
+    foreach {name ver body} $::instrument::incrTclCmds {
 	if {$name == "class" && $ver == "2.0"} {
 	    break
 	}
     }
-    string compare $instrument::handler(class) $body
+    string compare $::instrument::handler(class) $body
 } 0
 test instrument-2.3 {instrument::initialize, tclx} {
     resetExtensions

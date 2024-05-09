@@ -80,14 +80,14 @@ proc find::showWindow {} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(findDbgWin)] == $gui::gui(findDbgWin)} {
-	wm deiconify $gui::gui(findDbgWin)
-	focus $find::findBox.e
-	return $gui::gui(findDbgWin)
+    if {[info command $::gui::gui(findDbgWin)] == $::gui::gui(findDbgWin)} {
+	wm deiconify $::gui::gui(findDbgWin)
+	focus $::find::findBox.e
+	return $::gui::gui(findDbgWin)
     } else {
 	find::createWindow
-	focus $find::findBox.e
-	return $gui::gui(findDbgWin)
+	focus $::find::findBox.e
+	return $::gui::gui(findDbgWin)
     }  
 }
 
@@ -108,12 +108,12 @@ proc find::createWindow {} {
     set bd 2
     set pad 6
 
-    set top [toplevel $gui::gui(findDbgWin)]
+    set top [toplevel $::gui::gui(findDbgWin)]
     ::guiUtil::positionWindow $top
     wm minsize $top 100 100
     wm resizable $top 1 0
     wm title $top "Find"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     set mainFrm [frame $top.mainFrm -bd $bd -relief raised]
 
@@ -158,7 +158,7 @@ proc find::createWindow {} {
     set findBut [button $mainFrm.findBut -text "Find Next" -default active \
 	    -command {find::execute}]
     set closeBut [button $mainFrm.closeBut -text "Close" -default normal \
-	    -command {destroy $gui::gui(findDbgWin)}]
+	    -command {destroy $::gui::gui(findDbgWin)}]
 
     grid $findFrm  -row 0 -column 0 -sticky nwe -columnspan 2 -padx $pad
     grid $findBut  -row 0 -column 2 -sticky nwe -padx $pad -pady $pad
@@ -203,7 +203,7 @@ proc find::execute {} {
     # text widget requires the find command then it will need
     # to re-implement this function and initialize these vars.
 
-    set findText     $code::codeWin
+    set findText     $::code::codeWin
     set findSeeCmd   code::see
     set findYviewCmd code::yview
 
@@ -216,7 +216,7 @@ proc find::execute {} {
 
     # Put focus back to the Code Window and remove the Find Window.
     focus $findText
-    destroy $gui::gui(findDbgWin)
+    destroy $::gui::gui(findDbgWin)
 }
 
 # find::init --
@@ -286,7 +286,7 @@ proc find::init {} {
 #	Boolean, true is find next can be called.
 
 proc find::nextOK {} {
-    return [expr {$find::findText != {}}]
+    return [expr {$::find::findText != {}}]
 }
 
 # find::next --
@@ -538,14 +538,14 @@ proc goto::showWindow {} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(gotoDbgWin)] == $gui::gui(gotoDbgWin)} {
-	wm deiconify $gui::gui(gotoDbgWin)
-	focus $goto::lineEnt
-	return $gui::gui(gotoDbgWin)
+    if {[info command $::gui::gui(gotoDbgWin)] == $::gui::gui(gotoDbgWin)} {
+	wm deiconify $::gui::gui(gotoDbgWin)
+	focus $::goto::lineEnt
+	return $::gui::gui(gotoDbgWin)
     } else {
 	goto::createWindow
-	focus $goto::lineEnt
-	return $gui::gui(gotoDbgWin)
+	focus $::goto::lineEnt
+	return $::gui::gui(gotoDbgWin)
     }
 }
 
@@ -569,11 +569,11 @@ proc goto::createWindow {} {
     set bd 2
     set pad 6
 
-    set top [toplevel $gui::gui(gotoDbgWin)]
+    set top [toplevel $::gui::gui(gotoDbgWin)]
     ::guiUtil::positionWindow $top
     wm resizable $top 0 0
     wm title $top "Goto"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     set mainFrm [frame $top.mainFrm -bd $bd -relief raised]
 
@@ -592,7 +592,7 @@ proc goto::createWindow {} {
     set gotoBut [button $placeFrm.gotoBut -text $choiceVar -default active \
 	    -command {goto::execute} -width 10]
     set closeBut [button $placeFrm.closeBut -text Close -default normal\
-	    -command {destroy $gui::gui(gotoDbgWin)} -width 10]
+	    -command {destroy $::gui::gui(gotoDbgWin)} -width 10]
 
     grid $gotoBut   -row 0 -column 0 -sticky w -padx $pad
     grid $closeBut  -row 0 -column 1 -sticky w -padx $pad
@@ -678,7 +678,7 @@ proc goto::execute {} {
     variable gotoBut
 
     if {[gui::getCurrentBlock] == {}} {
-	bell -displayof $gui::gui(gotoDbgWin)
+	bell -displayof $::gui::gui(gotoDbgWin)
 	return
     }
 
@@ -694,7 +694,7 @@ proc goto::execute {} {
 	if {$line == "end"} {
 	    set line $end
 	} else {
-	    bell -displayof $gui::gui(gotoDbgWin)
+	    bell -displayof $::gui::gui(gotoDbgWin)
 	    $lineEnt delete 0 end
 	    return
 	}
@@ -709,7 +709,7 @@ proc goto::execute {} {
 	    if {$moveTo > $end} {
 		set moveTo $end
 	    }
-	    set loc [code::makeCodeLocation $code::codeWin $moveTo.0]
+	    set loc [code::makeCodeLocation $::code::codeWin $moveTo.0]
 	}
 	1 {
 	    # Move down lines.
@@ -718,14 +718,14 @@ proc goto::execute {} {
 	    if {$moveTo > $end} {
 		set moveTo $end
 	    }
-	    set loc [code::makeCodeLocation $code::codeWin $moveTo.0]
+	    set loc [code::makeCodeLocation $::code::codeWin $moveTo.0]
 	}
 	2 {
 	    # Goto line.
 	    if {$line > $end} {
 		set line $end
 	    }
-	    set loc [code::makeCodeLocation $code::codeWin $line.0]
+	    set loc [code::makeCodeLocation $::code::codeWin $line.0]
 	}
     }
     gui::showCode $loc

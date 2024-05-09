@@ -179,7 +179,7 @@ proc system::initGroups {} {
 	    appArgList		{}			{} \
 	    appDirList		{}			{} \
 	    appInterpList	[system::getInterps]	{} \
-	    appType		$debugger::parameters(appType) {} \
+	    appType		$::debugger::parameters(appType) {} \
 	    breakList		{}			{} \
 	    errorAction		1		dbg::initInstrument	\
 	    dontInstrument	{}		dbg::initInstrument	\
@@ -308,7 +308,7 @@ proc system::saveDefaultPrefs {close} {
 
 proc system::winRestoreCmd {group} {
     set result [catch {
-	set key "$projectInfo::prefsRoot\\$projectInfo::prefsLocation\\$debugger::parameters(productName)\\$group"
+	set key "$::projectInfo::prefsRoot\\$::projectInfo::prefsLocation\\$::debugger::parameters(productName)\\$group"
 
 	set noKey [catch {
 	    set prefList {}
@@ -324,7 +324,7 @@ proc system::winRestoreCmd {group} {
 		    [projectInfo::getPreviousPrefslocation]
 
 	    while {[string length $curPrefsLocation] != 0 && $noKey} {
-		set key "$projectInfo::prefsRoot\\$projectInfo::prefsLocation\\$debugger::parameters(productName)\\$group"
+		set key "$::projectInfo::prefsRoot\\$::projectInfo::prefsLocation\\$::debugger::parameters(productName)\\$group"
 		set noKey [catch {
 		    set prefList {}
 		    foreach {valueName} [registry values $key] {
@@ -361,7 +361,7 @@ proc system::winSaveCmd {group} {
     system::updatePreferences
 
 
-    set key "$projectInfo::prefsRoot\\$projectInfo::prefsLocation\\$debugger::parameters(productName)\\$group"
+    set key "$::projectInfo::prefsRoot\\$::projectInfo::prefsLocation\\$::debugger::parameters(productName)\\$group"
 
     set result [catch {
 	registry delete $key
@@ -387,8 +387,8 @@ proc system::winSaveCmd {group} {
 
 proc system::unixRestoreCmd {group} {
     set result [catch {
-	set file [file join $projectInfo::prefsRoot \
-		$projectInfo::prefsLocation Debugger $group]
+	set file [file join $::projectInfo::prefsRoot \
+		$::projectInfo::prefsLocation Debugger $group]
 	set noFile [catch {set id [open $file r]}]
 	if {$noFile} {
 	    # See if an older version of preferences are available on disk.
@@ -397,7 +397,7 @@ proc system::unixRestoreCmd {group} {
 		    [projectInfo::getPreviousPrefslocation]
 
 	    while {[string length $curPrefsLocation] != 0 && $noFile} {
-		set file [file join $projectInfo::prefsRoot \
+		set file [file join $::projectInfo::prefsRoot \
 			$curPrefsLocation Debugger $group]
 		set noFile [catch {set id [open $file r]}]
 
@@ -431,8 +431,8 @@ proc system::unixRestoreCmd {group} {
 proc system::unixSaveCmd {group} {
     system::updatePreferences
     set result [catch {
-	set file [file join $projectInfo::prefsRoot \
-		$projectInfo::prefsLocation Debugger $group]
+	set file [file join $::projectInfo::prefsRoot \
+		$::projectInfo::prefsLocation Debugger $group]
 	file mkdir [file dirname $file]
 	set id [open $file w]
 
@@ -463,12 +463,12 @@ proc system::unixSaveCmd {group} {
 proc system::updatePreferences {} {
     guiUtil::preservePaneGeometry
     set windowList [list \
-	    $gui::gui(breakDbgWin) $gui::gui(dataDbgWin)  \
-	    $gui::gui(errorDbgWin) $gui::gui(evalDbgWin)  \
-	    $gui::gui(fileDbgWin)  $gui::gui(findDbgWin)  \
-	    $gui::gui(gotoDbgWin)  $gui::gui(loadDbgWin)  \
-	    $gui::gui(mainDbgWin)  $gui::gui(procDbgWin)  \
-	    $gui::gui(watchDbgWin) \
+	    $::gui::gui(breakDbgWin) $::gui::gui(dataDbgWin)  \
+	    $::gui::gui(errorDbgWin) $::gui::gui(evalDbgWin)  \
+	    $::gui::gui(fileDbgWin)  $::gui::gui(findDbgWin)  \
+	    $::gui::gui(gotoDbgWin)  $::gui::gui(loadDbgWin)  \
+	    $::gui::gui(mainDbgWin)  $::gui::gui(procDbgWin)  \
+	    $::gui::gui(watchDbgWin) \
     ]
     foreach x $windowList {
 	guiUtil::saveGeometry $x
@@ -572,7 +572,7 @@ proc system::getBrowserCmd {} {
     if {$::tcl_platform(platform) == "windows"} {
 	return {}
     } else {
-	return $system::browser(netscape)
+	return $::system::browser(netscape)
     }
 }
 
@@ -717,8 +717,8 @@ proc system::setWidgetAttributes {} {
 	}
 	set bar [list \
 	    color  system3Dlight \
-	    width  [expr {[image width  $image::image(var_enable)] + 4}] \
-    	    height [expr {[image height $image::image(var_enable)]}]]
+	    width  [expr {[image width  $::image::image(var_enable)] + 4}] \
+    	    height [expr {[image height $::image::image(var_enable)]}]]
 
 	set exeFiles  [list {{Executable files} .exe} {{All Files} *}]
 	set exeString   ".exe"
@@ -758,8 +758,8 @@ proc system::setWidgetAttributes {} {
 
 	set bar [list \
 	    color  $color(lightOutside) \
-	    width  [expr {[image width $image::image(var_enable)] + 4}] \
-	    height [expr {[image height $image::image(var_enable)]}]]
+	    width  [expr {[image width $::image::image(var_enable)] + 4}] \
+	    height [expr {[image height $::image::image(var_enable)]}]]
 
 	set arrow left_ptr
 	set exeFiles  [list {{All Files} *}]	
@@ -780,7 +780,7 @@ proc system::setWidgetAttributes {} {
 #	A cursor name.
 
 proc system::getArrow {} {
-    return $system::arrow
+    return $::system::arrow
 }
 
 # system::getBar --
@@ -794,7 +794,7 @@ proc system::getArrow {} {
 #	An array set order list of attributes.
 
 proc system::getBar {} {
-    return $system::bar
+    return $::system::bar
 }
 
 # system::getColor --
@@ -808,7 +808,7 @@ proc system::getBar {} {
 #	An array set order list of attributes.
 
 proc system::getColor {} {
-    return [array get system::color]
+    return [array get ::system::color]
 }
 
 # system::getExeFiles --
@@ -823,7 +823,7 @@ proc system::getColor {} {
 #	file dialog boxes.
 
 proc system::getExeFiles {} {
-    return $system::exeFiles
+    return $::system::exeFiles
 }
 
 # system::getExeString --
@@ -840,9 +840,9 @@ proc system::getExeFiles {} {
 
 proc system::getExeString {} {
     if {[info exists ::tcl_platform(debug)]} {
-	return "[system::getDbgSuffix]$system::exeString"
+	return "[system::getDbgSuffix]$::system::exeString"
     } else {
-	return "$system::exeString"
+	return "$::system::exeString"
     }
 }
 
@@ -858,7 +858,7 @@ proc system::getExeString {} {
 #	A string.
 
 proc system::getDbgSuffix {} {
-    return $system::dbgSuffix
+    return $::system::dbgSuffix
 }
 
 # system::getComSpec --
@@ -942,7 +942,7 @@ proc system::bindToAppIcon {toplevel} {
 proc system::getBrowser {} {
     if {($::tcl_platform(platform) == "windows") \
 	    && ([pref::prefGet browserDefault])} {
-	return $system::browser(start)
+	return $::system::browser(start)
     }
     if {[pref::prefExists browserCmd]} {
 	return [pref::prefGet browserCmd]
@@ -1001,7 +1001,7 @@ proc system::openURL {url} {
 	    # methods to exec Netscape on Unix.  Otherwise append
 	    # the URL and exec the browser command.
 	    
-	    if {$system::browser(netscape) == $browserCmd} {
+	    if {$::system::browser(netscape) == $browserCmd} {
 		set browserCmdCopy $browserCmd
 		lappend browserCmd -remote openURL($url)
 		if {[catch {set result [eval exec $browserCmd]}]} {
@@ -1100,10 +1100,10 @@ proc system::createBrowserWindow {mainFrm} {
 	grid columnconfigure $subFrm 1 -weight 1
 	pack $subFrm -fill both -expand true -padx $pad -pady $pad2
 
-	set system::browser(fg) [$otherLbl cget -fg]
+	set ::system::browser(fg) [$otherLbl cget -fg]
 	system::checkBrowserWindowState $otherLbl $otherEnt
 
-	lappend prefWin::focusOrder($mainFrm) $defaultRad $otherRad $otherEnt
+	lappend ::prefWin::focusOrder($mainFrm) $defaultRad $otherRad $otherEnt
     } else {
 #	set subFrm  [prefWin::createSubFrm $mainFrm browserFrm "Browser"]
 	set subFrm  [prefWin::createSubFrm $mainFrm browserFrm ""]
@@ -1118,12 +1118,12 @@ proc system::createBrowserWindow {mainFrm} {
 	grid columnconfigure $subFrm 0 -weight 1
 #	pack $subFrm -fill both -expand true -padx $pad -pady $pad2
 
-	$browserBox add $system::browser(iexplorer)
-	$browserBox add $system::browser(netscape)
+	$browserBox add $::system::browser(iexplorer)
+	$browserBox add $::system::browser(netscape)
 	$browserBox add [system::getBrowser]
 	$browserBox set [system::getBrowser]
 
-	lappend prefWin::focusOrder($mainFrm) $browserBox.e
+	lappend ::prefWin::focusOrder($mainFrm) $browserBox.e
     }
     return $mainFrm.browserFrm
 }
@@ -1153,7 +1153,7 @@ proc system::checkBrowserWindowState {args} {
 	    $ent configure -state disabled
 	    pref::prefSet TempPref browserCmd {}
 	} else {
-	    $lbl configure -fg $system::browser(fg)
+	    $lbl configure -fg $::system::browser(fg)
 	    $ent configure -state normal
 	}
     }
@@ -1171,7 +1171,7 @@ proc system::checkBrowserWindowState {args} {
 # Results:
 #	The application with with process id "pid" is killed.
 
-if {$tcl_platform(platform) == "unix"} {
+if {$::tcl_platform(platform) == "unix"} {
     proc kill {pid} {
 	exec kill -9 $pid
     }

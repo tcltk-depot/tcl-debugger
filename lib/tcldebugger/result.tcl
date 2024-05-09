@@ -38,7 +38,7 @@ proc result::createWindow {mainDbgWin} {
 
     grid rowconf $frame 1 -minsize 3
     bind $text <Configure> {
- 	gui::formatText $result::text right
+ 	gui::formatText $::result::text right
     }
 
     # Set the behavior so we get the standard truncation behavior
@@ -52,8 +52,8 @@ proc result::createWindow {mainDbgWin} {
 
 proc result::updateWindow {} {
     variable text
-    if {[winfo exists $result::frame] \
-	    && [winfo ismapped $result::frame]} {
+    if {[winfo exists $::result::frame] \
+	    && [winfo ismapped $::result::frame]} {
 	resetWindow
 
 	set result [dbg::getResult [font::get -maxchars]]

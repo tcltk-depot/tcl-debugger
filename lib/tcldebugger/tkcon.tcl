@@ -90,7 +90,7 @@ proc tkCon::InitUI {w title} {
 
     ## Text Console
     set TKCON(console) [set con [text $w.text -wrap char \
-	    -padx 4 -pady 4 -font $font::metrics(-font) \
+	    -padx 4 -pady 4 -font $::font::metrics(-font) \
 	    -yscrollcommand [list $w.sy set] \
 	    -foreground $TKCON(color,stdin) \
 	    -width $TKCON(cols) -height $TKCON(rows)]]
@@ -484,7 +484,7 @@ proc tkCon::Bindings {} {
     #			and auto-scanning.
     #-----------------------------------------------------------------------
 
-    switch -glob $tcl_platform(platform) {
+    switch -glob $::tcl_platform(platform) {
 	win*	{ set TKCON(meta) Alt }
 	mac*	{ set TKCON(meta) Command }
 	default	{ set TKCON(meta) Meta }
@@ -591,9 +591,9 @@ proc tkCon::Bindings {} {
     }
     bind TkConsole <<TkCon_Clear>> {
 	## Clear console buffer, without losing current command line input
-	set tkCon::TKCON(tmp) [tkCon::CmdGet %W]
+	set ::tkCon::TKCON(tmp) [tkCon::CmdGet %W]
 	tkCon::clear
-	tkCon::Prompt {} $tkCon::TKCON(tmp)
+	tkCon::Prompt {} $::tkCon::TKCON(tmp)
     }
     bind TkConsole <<TkCon_Previous>> {
 	if {[%W compare {insert linestart} != {limit linestart}]} {
@@ -631,14 +631,14 @@ proc tkCon::Bindings {} {
     }
     bind TkConsole <<TkCon_SaveCommand>> {
 	## Save command buffer (swaps with current command)
-	set tkCon::TKCON(tmp) $tkCon::TKCON(cmdsave)
-	set tkCon::TKCON(cmdsave) [tkCon::CmdGet %W]
-	if {[string match {} $tkCon::TKCON(cmdsave)]} {
-	    set tkCon::TKCON(cmdsave) $tkCon::TKCON(tmp)
+	set ::tkCon::TKCON(tmp) $::tkCon::TKCON(cmdsave)
+	set ::tkCon::TKCON(cmdsave) [tkCon::CmdGet %W]
+	if {[string match {} $::tkCon::TKCON(cmdsave)]} {
+	    set ::tkCon::TKCON(cmdsave) $::tkCon::TKCON(tmp)
 	} else {
 	    %W delete limit end-1c
 	}
-	tkCon::Insert %W $tkCon::TKCON(tmp)
+	tkCon::Insert %W $::tkCon::TKCON(tmp)
 	%W see end
     }
     catch {bind TkConsole <Key-Up>   { ::tk::TextScrollPages %W -1 }}
@@ -669,11 +669,11 @@ proc tkCon::Bindings {} {
 		    -selection CLIPBOARD} tkCon::TKCON(tmp)])
 	} {
 	    if {[%W compare @%x,%y < limit]} {
-		%W insert end $tkCon::TKCON(tmp)
+		%W insert end $::tkCon::TKCON(tmp)
 	    } else {
-		%W insert @%x,%y $tkCon::TKCON(tmp)
+		%W insert @%x,%y $::tkCon::TKCON(tmp)
 	    }
-	    if {[string match *\n* $tkCon::TKCON(tmp)]} {tkCon::Eval %W}
+	    if {[string match *\n* $::tkCon::TKCON(tmp)]} {tkCon::Eval %W}
 	}
     }
 
@@ -685,25 +685,25 @@ proc tkCon::Bindings {} {
     ## Bindings for doing special things based on certain keys
     ##
     bind PostCon <Key-parenright> {
-	if {$tkCon::TKCON(lightbrace) && $tkCon::TKCON(blinktime)>99 && \
+	if {$::tkCon::TKCON(lightbrace) && $::tkCon::TKCON(blinktime)>99 && \
 		[string compare \\ [%W get insert-2c]]} {
 	    tkCon::MatchPair %W \( \) limit
 	}
     }
     bind PostCon <Key-bracketright> {
-	if {$tkCon::TKCON(lightbrace) && $tkCon::TKCON(blinktime)>99 && \
+	if {$::tkCon::TKCON(lightbrace) && $::tkCon::TKCON(blinktime)>99 && \
 		[string compare \\ [%W get insert-2c]]} {
 	    tkCon::MatchPair %W \[ \] limit
 	}
     }
     bind PostCon <Key-braceright> {
-	if {$tkCon::TKCON(lightbrace) && $tkCon::TKCON(blinktime)>99 && \
+	if {$::tkCon::TKCON(lightbrace) && $::tkCon::TKCON(blinktime)>99 && \
 		[string compare \\ [%W get insert-2c]]} {
 	    tkCon::MatchPair %W \{ \} limit
 	}
     }
     bind PostCon <Key-quotedbl> {
-	if {$tkCon::TKCON(lightbrace) && $tkCon::TKCON(blinktime)>99 && \
+	if {$::tkCon::TKCON(lightbrace) && $::tkCon::TKCON(blinktime)>99 && \
 		[string compare \\ [%W get insert-2c]]} {
 	    tkCon::MatchQuote %W limit
 	}

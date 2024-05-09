@@ -62,7 +62,7 @@ proc stack::createWindow {masterFrm} {
 	stack::checkState
     }
     bind stackDbgWin <1> {
-	focus $stack::stackText
+	focus $::stack::stackText
     }
     bind stackDbgWin <Configure> {
 	gui::formatText %W right
@@ -392,7 +392,7 @@ proc stack::getSelectedLevel {} {
 #	A location opaque type for a stack.
 
 proc stack::getLocation {line} {
-    return $stack::stack($line)
+    return $::stack::stack($line)
 }
 
 # stack::getPC --
@@ -412,7 +412,7 @@ proc stack::getPC {} {
     if {[gui::getCurrentState] != "stopped"} {
 	return {}
     }
-    return [stack::getLocation [sel::getCursor $stack::stackText]]
+    return [stack::getLocation [sel::getCursor $::stack::stackText]]
 }
 
 # stack::getPCType --
@@ -435,8 +435,8 @@ proc stack::getPCType {} {
     if {[gui::getCurrentState] != "stopped"} {
 	return {}
     }
-    set cursor [sel::getCursor $stack::stackText]
-    set end    [lindex [split [$stack::stackText index "end - 1l"] .] 0]
+    set cursor [sel::getCursor $::stack::stackText]
+    set end    [lindex [split [$::stack::stackText index "end - 1l"] .] 0]
     if {$cursor == $end} {
 	return current
     }

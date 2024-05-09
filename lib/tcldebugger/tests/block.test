@@ -57,7 +57,7 @@ test block-1.2 {blk::makeBlock, multiple} {
     set result
 } {0 {file instrumented lines version} dummy.tcl 0 0 {file instrumented lines version} dummy2.tcl 0 0}
 test block-1.3 {blk::makeBlock, id reuse} {
-    set next [expr $blk::blockCounter + 1]
+    set next [expr $::blk::blockCounter + 1]
     set blk::blk$next 1
     set b1 [blk::makeBlock dummy.tcl]
     set result [expr $b1 == $next]

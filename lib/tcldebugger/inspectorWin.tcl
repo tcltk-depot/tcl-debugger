@@ -51,7 +51,7 @@ proc inspector::showVariable {name level} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(dataDbgWin)] != $gui::gui(dataDbgWin)} {
+    if {[info command $::gui::gui(dataDbgWin)] != $::gui::gui(dataDbgWin)} {
 	inspector::createWindow
     }
 
@@ -61,9 +61,9 @@ proc inspector::showVariable {name level} {
     set levelVar $level
     inspector::updateWindow 1
 
-    wm deiconify $gui::gui(dataDbgWin)
-    focus $gui::gui(dataDbgWin)
-    return $gui::gui(dataDbgWin)
+    wm deiconify $::gui::gui(dataDbgWin)
+    focus $::gui::gui(dataDbgWin)
+    return $::gui::gui(dataDbgWin)
 }
 
 # inspector::updateVarFromEntry --
@@ -116,7 +116,7 @@ proc inspector::showResult {} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(dataDbgWin)] != $gui::gui(dataDbgWin)} {
+    if {[info command $::gui::gui(dataDbgWin)] != $::gui::gui(dataDbgWin)} {
 	inspector::createWindow
     }
 
@@ -128,9 +128,9 @@ proc inspector::showResult {} {
     set levelVar [dbg::getLevel]
     inspector::updateWindow 1
 
-    wm deiconify $gui::gui(dataDbgWin)
-    focus $gui::gui(dataDbgWin)
-    return $gui::gui(dataDbgWin)
+    wm deiconify $::gui::gui(dataDbgWin)
+    focus $::gui::gui(dataDbgWin)
+    return $::gui::gui(dataDbgWin)
 }
 
 # inspector::createWindow --
@@ -150,11 +150,11 @@ proc inspector::createWindow {} {
     variable varText
     variable choiceBox
 
-    set top [toplevel $gui::gui(dataDbgWin)]
+    set top [toplevel $::gui::gui(dataDbgWin)]
     ::guiUtil::positionWindow $top 400x250
     wm minsize $top 100 100
     wm title $top "Data Display"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     set relief groove
     set pad 6
@@ -173,7 +173,7 @@ proc inspector::createWindow {} {
     set inspectBut [button $inspectFrm.inspectBut -text "Display" -width 8 \
 	    -command inspector::updateVarFromEntry]
     set closeBut [button $inspectFrm.closeBut -text "Close" -width 8 \
-	    -command "destroy $gui::gui(dataDbgWin)"]
+	    -command "destroy $::gui::gui(dataDbgWin)"]
 
     pack $closeBut -side right -padx $pad
     pack $inspectBut -side right
@@ -207,7 +207,7 @@ proc inspector::createWindow {} {
     foreach choice {"Array" "List" "Raw Data" "Line Wrap"} {
 	$choiceBox add $choice
     }
-    set inspector::viewVar "Line Wrap"
+    set ::inspector::viewVar "Line Wrap"
     pack $choiceLbl -pady 3 -side left
     pack $choiceBox -padx 3 -pady 3 -side left
 
@@ -284,7 +284,7 @@ proc inspector::updateWindow {{setChoice 0}} {
     variable valueCache
     variable viewCache
 
-    if {![winfo exists $gui::gui(dataDbgWin)]} {
+    if {![winfo exists $::gui::gui(dataDbgWin)]} {
 	return
     }
     if {[gui::getCurrentState] != "stopped"} {
@@ -321,9 +321,9 @@ proc inspector::updateWindow {{setChoice 0}} {
     
     if {$setChoice} {
 	if {$type == "a"} {
-	    set inspector::viewVar "Array"
+	    set ::inspector::viewVar "Array"
 	} else {
-	    set inspector::viewVar "Line Wrap"
+	    set ::inspector::viewVar "Line Wrap"
 	}
     }
     set view [$choiceBox get]

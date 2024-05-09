@@ -233,7 +233,7 @@ proc icon::drawLBP {text index breakState {pcType {}}} {
 	noBreak {
 	    if {$pcType != {}} {
 		$text image create $index -name currentImage \
-			-image $image::image($pcType)
+			-image $::image::image($pcType)
 	    }
 	    return
 	}
@@ -272,7 +272,7 @@ proc icon::drawLBP {text index breakState {pcType {}}} {
 	}
     }
     $text image create $index -name $imageName \
-	    -image $image::image($imageType)
+	    -image $::image::image($imageType)
     $text tag add $tagName $index
     $text tag add setBreak $index
 }
@@ -478,7 +478,7 @@ proc icon::drawVBP {text index breakState {pcType {}}} {
 	noBreak {
 	    if {$pcType != {}} {
 		$text image create $index -name currentImage \
-			-image $image::image($pcType)
+			-image $::image::image($pcType)
 	    }
 	    return
 	}
@@ -508,7 +508,7 @@ proc icon::drawVBP {text index breakState {pcType {}}} {
 	}
     }
     $text image create $index -name $imageName \
-	    -image $image::image($imageType)
+	    -image $::image::image($imageType)
     $text tag add $tagName $index
     $text tag add setBreak $index
 }

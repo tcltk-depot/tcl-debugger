@@ -115,20 +115,20 @@ proc code::createWindow {masterFrm} {
     } 
 
     bind setBreakpoint <Button-1> {
-	code::toggleLBP $code::codeBar @0,%y onoff
+	code::toggleLBP $::code::codeBar @0,%y onoff
 	break
     }
     bind setBreakpoint <Control-1> {
-	code::toggleLBP $code::codeBar @0,%y enabledisable
+	code::toggleLBP $::code::codeBar @0,%y enabledisable
 	break
     }
     bind codeDbgWin <Return> {
-	code::toggleLBP $code::codeBar \
+	code::toggleLBP $::code::codeBar \
 		[code::getInsertLine].0 onoff
 	break
     }
     bind codeDbgWin <Control-Return> {
-	code::toggleLBP $code::codeBar \
+	code::toggleLBP $::code::codeBar \
 		[code::getInsertLine].0 enabledisable
 	break
     }
@@ -407,9 +407,9 @@ proc code::updateCodeBar {} {
 #	None.
 
 proc code::updateTabStops {} {
-    if {[winfo exists $code::codeWin]} {
-	set tabWidth  [expr {$font::metrics(-width) * [pref::prefGet tabSize]}]
-	$code::codeWin configure -tabs $tabWidth
+    if {[winfo exists $::code::codeWin]} {
+	set tabWidth  [expr {$::font::metrics(-width) * [pref::prefGet tabSize]}]
+	$::code::codeWin configure -tabs $tabWidth
     }
     return
 }
@@ -443,16 +443,16 @@ proc code::updateStatusLine {} {
 #	None.
 
 proc code::resetWindow {{msg {}}} {
-    $code::codeWin tag remove highlight 0.0 end
-    $code::codeWin tag remove highlight_error 0.0 end
-    $code::codeWin tag remove highlight_cmdresult 0.0 end
+    $::code::codeWin tag remove highlight 0.0 end
+    $::code::codeWin tag remove highlight_error 0.0 end
+    $::code::codeWin tag remove highlight_cmdresult 0.0 end
     code::changeFocus out
-    icon::unsetCurrentIcon $code::codeBar currentImage
+    icon::unsetCurrentIcon $::code::codeBar currentImage
     if {$msg != {}} {
-	$code::codeBar delete 0.0 end
-	$code::lineBar delete 0.0 end
-	$code::codeWin delete 0.0 end
-	$code::codeWin insert 0.0 $msg message
+	$::code::codeBar delete 0.0 end
+	$::code::lineBar delete 0.0 end
+	$::code::codeWin delete 0.0 end
+	$::code::codeWin insert 0.0 $msg message
 	gui::setCurrentBlock {}
 	gui::setCurrentFile  {}
 	gui::setCurrentLine  {}
@@ -496,10 +496,10 @@ proc code::changeFocus {focus} {
 #	None.
 
 proc code::focusCodeWin {} {
-    if {[focus] == $code::codeWin} {
+    if {[focus] == $::code::codeWin} {
 	code::changeFocus in
     } else {
-	focus -force $code::codeWin
+	focus -force $::code::codeWin
     }
 }
 
@@ -514,9 +514,9 @@ proc code::focusCodeWin {} {
 #	None.
 
 proc code::scrollWindow {args} {
-    eval {$code::codeWin yview} $args
-    $code::lineBar yview moveto [lindex [$code::codeWin yview] 0]
-    $code::codeBar yview moveto [lindex [$code::codeWin yview] 0]
+    eval {$::code::codeWin yview} $args
+    $::code::lineBar yview moveto [lindex [$::code::codeWin yview] 0]
+    $::code::codeBar yview moveto [lindex [$::code::codeWin yview] 0]
 }
 
 # code::moveScrollbar --
@@ -533,10 +533,10 @@ proc code::scrollWindow {args} {
 #	None.
 
 proc code::moveScrollbar {sb args} {
-    eval {gui::scrollDbgText $code::codeWin $sb \
+    eval {gui::scrollDbgText $::code::codeWin $sb \
 	    [list grid $sb -row 0 -column 3 -sticky nse]} $args
-    $code::lineBar yview moveto [lindex [$code::codeWin yview] 0]
-    $code::codeBar yview moveto [lindex [$code::codeWin yview] 0]    
+    $::code::lineBar yview moveto [lindex [$::code::codeWin yview] 0]
+    $::code::codeBar yview moveto [lindex [$::code::codeWin yview] 0]    
 }
 
 # code::moveScrollbarX --
@@ -573,17 +573,17 @@ proc code::tkTextAutoScan {w} {
 #    global tkPriv
     if {![winfo exists $w]} return
     if {$::tk::Priv(y) >= [winfo height $w]} {
-	$code::codeBar yview scroll 2 units
-	$code::lineBar yview scroll 2 units
-	$code::codeWin yview scroll 2 units
+	$::code::codeBar yview scroll 2 units
+	$::code::lineBar yview scroll 2 units
+	$::code::codeWin yview scroll 2 units
     } elseif {$::tk::Priv(y) < 0} {
-	$code::codeBar yview scroll -2 units
-	$code::lineBar yview scroll -2 units
-	$code::codeWin yview scroll -2 units
+	$::code::codeBar yview scroll -2 units
+	$::code::lineBar yview scroll -2 units
+	$::code::codeWin yview scroll -2 units
     } elseif {$::tk::Priv(x) >= [winfo width $w]} {
-	$code::codeWin xview scroll 2 units
+	$::code::codeWin xview scroll 2 units
     } elseif {$::tk::Priv(x) < 0} {
-	$code::codeWin xview scroll -2 units
+	$::code::codeWin xview scroll -2 units
     } else {
 	return
     }
@@ -725,9 +725,9 @@ proc code::makeCodeLocation {text index} {
 #	None
 
 proc code::see {index} {
-    $code::codeWin see $index
-    $code::codeBar yview moveto [lindex [$code::codeWin yview] 0]
-    $code::lineBar yview moveto [lindex [$code::codeWin yview] 0]
+    $::code::codeWin see $index
+    $::code::codeBar yview moveto [lindex [$::code::codeWin yview] 0]
+    $::code::lineBar yview moveto [lindex [$::code::codeWin yview] 0]
 }
 
 # code::yview --
@@ -742,9 +742,9 @@ proc code::see {index} {
 #	None
 
 proc code::yview {args} {
-    eval {$code::codeWin yview} $args
-    $code::codeBar yview moveto [lindex [$code::codeWin yview] 0]
-    $code::lineBar yview moveto [lindex [$code::codeWin yview] 0]    
+    eval {$::code::codeWin yview} $args
+    $::code::codeBar yview moveto [lindex [$::code::codeWin yview] 0]
+    $::code::lineBar yview moveto [lindex [$::code::codeWin yview] 0]    
 }
 
 # code::getCodeSize --
@@ -758,7 +758,7 @@ proc code::yview {args} {
 #	Return, in line numbers, the length for the body of code.
 
 proc code::getCodeSize {} {
-    set num [lindex [split [$code::codeWin index "end - 1c"] .] 0]
+    set num [lindex [split [$::code::codeWin index "end - 1c"] .] 0]
     return $num
 }
 
@@ -774,8 +774,8 @@ proc code::getCodeSize {} {
 #	Return the line number of the insertion cursor.
 
 proc code::getInsertLine {} {
-    if {[winfo exists $code::codeWin]} {
-	return [lindex [split [$code::codeWin index insert] .] 0]
+    if {[winfo exists $::code::codeWin]} {
+	return [lindex [split [$::code::codeWin index insert] .] 0]
     } else {
 	return 1
     }

@@ -68,13 +68,13 @@ proc file::getOrderedBlocks {} {
 	# append any blocks that are not in the MRU list onto
 	# the end of the new list.
 	
-	set orderedList $file::mruList
+	set orderedList $::file::mruList
 	set blockList   [lsort [blk::getFiles]]
 	foreach block $blockList {
 	    if {[blk::isDynamic $block]} {
 		continue
 	    }
-	    if {[lsearch -exact $file::mruList $block] < 0} {
+	    if {[lsearch -exact $::file::mruList $block] < 0} {
 		lappend orderedList $block
 	    }
 	}

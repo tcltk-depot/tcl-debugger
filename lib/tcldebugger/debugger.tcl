@@ -189,13 +189,13 @@ proc debugger::init {argv newParameters} {
 		h -
 		prohelp -
 		help {
-		    set projectInfo::printCopyright 0
+		    set ::projectInfo::printCopyright 0
 		    set showHelp 1
 		    set dontStart 1
 		}
 		v -
 		version {
-		    set projectInfo::printCopyright 1
+		    set ::projectInfo::printCopyright 1
 		    set dontStart 1
 		}
 		coverage {
@@ -275,7 +275,7 @@ proc debugger::init {argv newParameters} {
 
     # Register the error handler for errors during instrumentation.
 
-    set instrument::errorHandler gui::instrumentErrorHandler
+    set ::instrument::errorHandler gui::instrumentErrorHandler
 
     # Initialize the debugger.
 
@@ -305,9 +305,9 @@ proc debugger::init {argv newParameters} {
     # Hide the main window until the splash screen is gone.
 
     if {[winfo exists $about]} {
-	bind $about <Destroy> { wm deiconify $gui::gui(mainDbgWin) }
+	bind $about <Destroy> { wm deiconify $::gui::gui(mainDbgWin) }
     } else {
-	wm deiconify $gui::gui(mainDbgWin)
+	wm deiconify $::gui::gui(mainDbgWin)
     }
 
     # Defer the update until after we've sourced any extensions to avoid
@@ -379,10 +379,8 @@ proc ExitDebugger {} {
 #	None.
 
 proc CleanExit {} {
-    global tcl_platform
-
     proc ExitDebugger {} {}
-    if {$tcl_platform(platform) == "windows"} {
+    if {$::tcl_platform(platform) == "windows"} {
 	registry delete [pref::prefGet key]
     } else {
 	file delete [pref::prefGet fileName]

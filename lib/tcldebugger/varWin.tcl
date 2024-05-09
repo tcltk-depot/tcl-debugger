@@ -45,7 +45,7 @@ proc var::createWindow {masterFrm} {
     set valuText [text $valuFrm.valuTxt -width 20 -height 20 -bd 0 \
 	    -yscroll [list $valuFrm.sb set]]
     set sb [scrollbar $valuFrm.sb -command {watch::scrollWindow \
-	    $var::nameText}]
+	    $::var::nameText}]
 
     pack propagate $vbpFrm 0
     pack $vbpFrm   -side left -fill y
@@ -61,15 +61,15 @@ proc var::createWindow {masterFrm} {
     # description of the text variable in the namespace eval
     # statement of watchWin.tcl.
 
-    set watch::text(name,$nameText) $nameText
-    set watch::text(name,$valuText) $nameText
-    set watch::text(name,$vbpText)  $nameText
-    set watch::text(valu,$nameText) $valuText
-    set watch::text(valu,$valuText) $valuText
-    set watch::text(valu,$vbpText)  $valuText
-    set watch::text(vbp,$nameText)  $vbpText
-    set watch::text(vbp,$valuText)  $vbpText
-    set watch::text(vbp,$vbpText)   $vbpText
+    set ::watch::text(name,$nameText) $nameText
+    set ::watch::text(name,$valuText) $nameText
+    set ::watch::text(name,$vbpText)  $nameText
+    set ::watch::text(valu,$nameText) $valuText
+    set ::watch::text(valu,$valuText) $valuText
+    set ::watch::text(valu,$vbpText)  $valuText
+    set ::watch::text(vbp,$nameText)  $vbpText
+    set ::watch::text(vbp,$valuText)  $vbpText
+    set ::watch::text(vbp,$vbpText)   $vbpText
 
     bind::addBindTags $valuText [list watchBind varDbgWin]
     bind::addBindTags $nameText [list watchBind varDbgWin]
@@ -77,24 +77,24 @@ proc var::createWindow {masterFrm} {
     gui::registerStatusMessage $vbpText \
 	    "Click in the bar to set a variable breakpoint"
     sel::setWidgetCmd $valuText all {
-	watch::cleanupSelection $var::valuText
+	watch::cleanupSelection $::var::valuText
 	var::checkState
     } {
-	watch::seeCallback $var::valuText
+	watch::seeCallback $::var::valuText
     }
 
     bind varDbgWin <<Dbg_AddWatch>> {
 	var::addToWatch
     }
     $valuText tag bind handle <Enter> {
-	set gui::afterStatus(%W) [after 2000 \
+	set ::gui::afterStatus(%W) [after 2000 \
 		{gui::updateStatusMessage -msg \
 		"Click to expand or flatten the array"}]
     }
     $valuText tag bind handle <Leave> {
 	if {[info exists gui::afterStatus(%W)]} { 
-	    after cancel $gui::afterStatus(%W)
-	    unset gui::afterStatus(%W)
+	    after cancel $::gui::afterStatus(%W)
+	    unset ::gui::afterStatus(%W)
 	    gui::updateStatusMessage -msg {}
 	}
     }
@@ -225,7 +225,7 @@ proc var::seeVarInWindow {varName moveFocus} {
     # retrieve a list of all valid var names.
 
     set varNameList {}
-    for {set i 1} {$i < [$var::nameText index end]} {incr i} {
+    for {set i 1} {$i < [$::var::nameText index end]} {incr i} {
 	set oname [watch::varDataGet $valuText $i.0 "oname"]
 	lappend varNameList [code::mangle $oname]
     }

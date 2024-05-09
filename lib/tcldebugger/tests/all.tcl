@@ -26,7 +26,7 @@ puts "Temporary files stored in $::tcltest::temporaryDirectory"
 set timeCmd {clock format [clock seconds]}
 puts stdout "Tests began at [eval $timeCmd]"
 
-if {$tcl_platform(platform) == "windows"} {
+if {$::tcl_platform(platform) == "windows"} {
     ::protest::testAllFiles "" wish$::protest::currentVersion(Tk-short)
 } else {
     ::protest::testAllFiles "" wish$::protest::currentVersion(Tk)

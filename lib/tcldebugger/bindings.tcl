@@ -40,8 +40,8 @@ namespace eval bind {
 
     # Watch Window - Scrolling
     bind watchBind <B1-Leave> {
-	set watch::priv(x,%W) %x
-	set watch::priv(y,%W) %y
+	set ::watch::priv(x,%W) %x
+	set ::watch::priv(y,%W) %y
 	watch::tkTextAutoScan %W
 	break
     }
@@ -60,8 +60,8 @@ namespace eval bind {
     bind watchBind <ButtonRelease-1> {
 	watch::tkCancelRepeat %W
 	if {[info exists watch::text(valu,%W)] \
-		&& ([$watch::text(valu,%W) index @0,%y] == \
-		$sel::selectStart($watch::text(valu,%W)))} {
+		&& ([$::watch::text(valu,%W) index @0,%y] == \
+		$::sel::selectStart($::watch::text(valu,%W)))} {
 	    watch::selectLine %W @0,%y
 	}
    }
@@ -86,8 +86,8 @@ namespace eval bind {
 
     # Watch Window - Select Range
     bind watchBind <B1-Motion> {
-	set watch::priv(x,%W) %x
-	set watch::priv(y,%W) %y
+	set ::watch::priv(x,%W) %x
+	set ::watch::priv(y,%W) %y
 	watch::selectLineRange %W @0,%y
     }
     bind watchBind <Shift-1> {
@@ -159,7 +159,7 @@ namespace eval bind {
     bind noEdit <B1-Leave> {
 	set ::tk::Priv(x) %x
 	set ::tk::Priv(y) %y
-	code::tkTextAutoScan $code::codeWin
+	code::tkTextAutoScan $::code::codeWin
 	break;
     }
     bind noEdit <B1-Enter> {
@@ -350,7 +350,7 @@ namespace eval bind {
     bind noEdit <KP_Enter> {
 	# nothing
     }
-    if {$tcl_platform(platform) == "macintosh"} {
+    if {$::tcl_platform(platform) == "macintosh"} {
 	bind noEdit <Command-KeyPress> {# nothing}
     }
 

@@ -130,15 +130,15 @@ namespace eval sel {
 
     bind selectLine <1> {
 	sel::setAnchor %W [lindex [split [%W index current] .] 0]
-	set sel::selectStart(%W) @0,%y
+	set ::sel::selectStart(%W) @0,%y
 	break
     }
     bind selectLine <ButtonRelease-1> {
 	if {[info exists sel::selectStart(%W)]} {
-	    if {[%W index @0,%y] == [%W index $sel::selectStart(%W)]} {
+	    if {[%W index @0,%y] == [%W index $::sel::selectStart(%W)]} {
 		sel::selectLine %W current
 	    }
-	    unset sel::selectStart(%W)
+	    unset ::sel::selectStart(%W)
 	}
 	break
     }
@@ -421,8 +421,8 @@ proc sel::changeFocus {text focus} {
 
 proc sel::selectAllLines {text} {
     $text tag add highlight 0.0 "end - 1 lines"
-    set sel::selectAnchor($text) 1
-    set sel::selectCursor($text) 1
+    set ::sel::selectAnchor($text) 1
+    set ::sel::selectCursor($text) 1
     sel::updateCursor $text
 }
 
@@ -500,7 +500,7 @@ proc sel::selectLineRange {text index} {
 
 proc sel::moveSelection {text amount} {
     if {[info exists sel::selectCursor($text)]} {
-	set newLine [expr {$sel::selectCursor($text) + $amount}]
+	set newLine [expr {$::sel::selectCursor($text) + $amount}]
     } else {
 	set newLine $amount
     }
@@ -533,7 +533,7 @@ proc sel::moveSelection {text amount} {
 
 proc sel::moveSelectionRange {text amount} {
     if {[info exists sel::selectCursor($text)]} {
-	set newLine [expr {$sel::selectCursor($text) + $amount}]
+	set newLine [expr {$::sel::selectCursor($text) + $amount}]
     } else {
 	set newLine $amount
     }    
@@ -566,7 +566,7 @@ proc sel::moveSelectionRange {text amount} {
 
 proc sel::moveCursor {text amount} {
     if {[info exists sel::selectCursor($text)]} {
-	set newCursor [expr {$sel::selectCursor($text) + $amount}]
+	set newCursor [expr {$::sel::selectCursor($text) + $amount}]
     } else {
 	set newCursor $amount
     }
@@ -605,7 +605,7 @@ proc sel::moveCursorToIndex {text index} {
 
 proc sel::selectCursorRange {text} {
     if {[info exists sel::selectCursor($text)]} {
-	set newLine $sel::selectCursor($text)
+	set newLine $::sel::selectCursor($text)
     } else {
 	set newLine 0
     }    
@@ -626,7 +626,7 @@ proc sel::selectCursorRange {text} {
 
 proc sel::selectCursor {text} {
     if {[info exists sel::selectCursor($text)]} {
-	set newLine $sel::selectCursor($text)
+	set newLine $::sel::selectCursor($text)
     } else {
 	set newLine 1
     }
@@ -651,7 +651,7 @@ proc sel::selectCursor {text} {
 
 proc sel::toggleCursor {text} {
     if {[info exists sel::selectCursor($text)]} {
-	set newLine $sel::selectCursor($text)
+	set newLine $::sel::selectCursor($text)
     } else {
 	set newLine 0
     }    
@@ -671,9 +671,9 @@ proc sel::toggleCursor {text} {
 
 proc sel::updateCursor {text} {
     if {![info exists sel::selectCursor($text)]} {
-	set sel::selectCursor($text) 1
+	set ::sel::selectCursor($text) 1
     }
-    set start "$sel::selectCursor($text).0"
+    set start "$::sel::selectCursor($text).0"
     set end   "$start lineend + 1c"
 
     $text tag remove focusIn 0.0 end
@@ -862,10 +862,10 @@ proc sel::isSelected {text line} {
 
 proc sel::getCursor {text} {
     if {![info exists sel::selectCursor($text)]} {
-	set sel::selectCursor($text) 1
+	set ::sel::selectCursor($text) 1
     }
 	
-    return $sel::selectCursor($text)
+    return $::sel::selectCursor($text)
 }
 
 # sel::setCursor --
@@ -885,7 +885,7 @@ proc sel::setCursor {text line} {
     } elseif {$line > [lindex [split [$text index end] .] 0]} {
 	set line $end
     }
-    set sel::selectCursor($text) $line
+    set ::sel::selectCursor($text) $line
 }
 
 # sel::getAnchor --
@@ -901,9 +901,9 @@ proc sel::setCursor {text line} {
 
 proc sel::getAnchor {text} {
     if {![info exists sel::selectAnchor($text)]} {
-	set sel::selectAnchor($text) 1
+	set ::sel::selectAnchor($text) 1
     }
-    return $sel::selectAnchor($text)
+    return $::sel::selectAnchor($text)
 }
 
 # sel::setAnchor --
@@ -923,7 +923,7 @@ proc sel::setAnchor {text line} {
     } elseif {$line > [lindex [split [$text index end] .] 0]} {
 	set line $end
     }
-    set sel::selectAnchor($text) $line
+    set ::sel::selectAnchor($text) $line
 }
 
 # sel::isTagInLine --

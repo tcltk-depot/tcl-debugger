@@ -157,10 +157,10 @@ proc menu::create {mainDbgWin} {
     $menubar add cascade -label "Edit" -menu $edit -underline 0
 
     $edit add command -label "Cut"  -underline 2 \
-	    -command {tk_textCopy $code::codeWin} -state disabled \
+	    -command {tk_textCopy $::code::codeWin} -state disabled \
 	    -acc $menuKeys(Cut)
     $edit add command -label "Copy"  -underline 0 \
-	    -command {tk_textCopy $code::codeWin} -state disabled \
+	    -command {tk_textCopy $::code::codeWin} -state disabled \
 	    -acc $menuKeys(Copy)
     $edit add command -label "Paste"  -underline 0 \
 	    -state disabled -acc $menuKeys(Paste)
@@ -194,24 +194,24 @@ proc menu::create {mainDbgWin} {
     $view add command -label "Connection status..." \
 	    -command {gui::showConnectStatus} -underline 0
     $view add command -label "Data Display..." \
-	    -command {watch::showInspector $var::nameText} -state disabled \
+	    -command {watch::showInspector $::var::nameText} -state disabled \
 	    -acc $menuKeys(Dbg_DataDisp) -underline 0
     $view add separator
     $view add checkbutton -label "Toolbar"  -underline 0 \
 	    -variable [pref::prefVar showToolbar] \
 	    -command {menu::showOrHideDbgWindow \
 	        [pref::prefGet showToolbar] \
-		[list grid $gui::gui(toolbarFrm) -row 0 -sticky we]}
+		[list grid $::gui::gui(toolbarFrm) -row 0 -sticky we]}
     $view add checkbutton -label "Result"  -underline 0 \
 	    -variable [pref::prefVar showResult] \
 	    -command {menu::showOrHideDbgWindow \
 	    [pref::prefGet showResult] \
-	    [list grid $gui::gui(resultFrm) -row 2 -sticky we]}
+	    [list grid $::gui::gui(resultFrm) -row 2 -sticky we]}
     $view add checkbutton -label "Status"  -underline 0 \
 	    -variable [pref::prefVar showStatusBar] \
 	    -command {menu::showOrHideDbgWindow \
 	    [pref::prefGet showStatusBar] \
-	    [list grid $gui::gui(statusFrm) -row 3 -sticky we]}
+	    [list grid $::gui::gui(statusFrm) -row 3 -sticky we]}
     $view add checkbutton -label "Line Numbers"  -underline 0 \
 	    -variable [pref::prefVar showCodeLines] \
 	    -command {menu::showOrHideDbgWindow \
@@ -255,21 +255,21 @@ proc menu::create {mainDbgWin} {
 	    -postcommand "menu::bpsPostCmd"]
     $bps add command -label "Add Line Breakpoint" -underline 0 \
 	    -acc "Return" -state disabled \
-	    -command {code::toggleLBP $code::codeBar \
-	    [$code::codeWin index insert] onoff}
+	    -command {code::toggleLBP $::code::codeBar \
+	    [$::code::codeWin index insert] onoff}
     $bps add command -label "Disable Line Breakpoint" -underline 0 \
 	    -acc "Ctrl-Return" -state disabled \
-	    -command {code::toggleLBP $code::codeBar \
-	    [$code::codeWin index insert] enabledisable}
+	    -command {code::toggleLBP $::code::codeBar \
+	    [$::code::codeWin index insert] enabledisable}
     $bps add separator
     $bps add command -label "Add Variable Breakpoint" -underline 4 \
 	    -acc "Return" -state disabled \
-	    -command {watch::toggleVBP $var::valuText \
-	    [sel::getCursor $var::valuText].0 onoff}
+	    -command {watch::toggleVBP $::var::valuText \
+	    [sel::getCursor $::var::valuText].0 onoff}
     $bps add command -label "Disable Variable Breakpoint" -underline 1 \
 	    -acc "Ctrl-Return" -state disabled \
-	    -command {watch::toggleVBP $var::valuText \
-	    [sel::getCursor $var::valuText].0 enabledisable}
+	    -command {watch::toggleVBP $::var::valuText \
+	    [sel::getCursor $::var::valuText].0 enabledisable}
 
     # Windows menu.
     set win [menu $menubar.window -tearoff 0 \
@@ -323,10 +323,10 @@ proc menu::create {mainDbgWin} {
 	}
 	$debug add checkbutton -label "Logging output" \
 		-variable dbg::debug -command {
-	    if {$dbg::debug} {
-		set dbg::logFilter message
+	    if {$::dbg::debug} {
+		set ::dbg::logFilter message
 	    } else {
-		set dbg::logFilter {}
+		set ::dbg::logFilter {}
 	    }
 	}
 	$debug add command -label "Remove All Prefs & Exit"  \
@@ -415,7 +415,7 @@ proc menu::filePostCmd {} {
 #	None.
 
 proc menu::recentProjPostCmd {} {
-    set m $menu::menu(recent)
+    set m $::menu::menu(recent)
     $m delete 0 end
     
     set i   1
@@ -446,11 +446,11 @@ proc menu::recentProjPostCmd {} {
 proc menu::editPostCmd {} {
     menu::changeState {cut copy findNext} disabled
     set focusWin [focus]
-    if {$focusWin == $code::codeWin} {
+    if {$focusWin == $::code::codeWin} {
         if {[$focusWin tag ranges sel] != {}} {
 	    menu::changeState {cut copy} normal
 	}
-    } elseif {$focusWin == $var::valuText || $focusWin == $stack::stackText} {
+    } elseif {$focusWin == $::var::valuText || $focusWin == $::stack::stackText} {
         if {[$focusWin tag ranges highlight] != {}} {
 	    menu::changeState {cut copy} normal
 	}
@@ -474,7 +474,7 @@ proc menu::editPostCmd {} {
 proc menu::viewPostCmd {} {
     menu::changeState {inspector} disabled
     set focusWin [focus]
-    if {$focusWin == $var::valuText} {
+    if {$focusWin == $::var::valuText} {
         if {[$focusWin tag ranges highlight] != {}} {
 	    menu::changeState {inspector} normal
 	}
@@ -510,8 +510,8 @@ proc menu::dbgPostCmd {} {
     # the given menu item will be enabled.
 
     set conditions {
-	breakpoints {($focusWin != $stack::stackText) && [proj::isProjectOpen]}
-	addToWatch {$focusWin == $var::valuText}
+	breakpoints {($focusWin != $::stack::stackText) && [proj::isProjectOpen]}
+	addToWatch {$focusWin == $::var::valuText}
 	restart {!$remote && ($state(stopped) || $state(running))}
 	run {(!$remote && $state(dead)) || $state(stopped)}
 	stepIn {(!$remote && $state(dead)) || $state(stopped)}
@@ -548,11 +548,11 @@ proc menu::bpsPostCmd {} {
     variable focusWin
     variable menu
 
-    if {$focusWin == $var::valuText} {
+    if {$focusWin == $::var::valuText} {
 	menu::changeState {addVBP disableVBP} normal
 	menu::changeState {addLBP disableLBP} disabled
-	set breakState [icon::getState $var::vbpText \
-		[sel::getCursor $var::valuText]]
+	set breakState [icon::getState $::var::vbpText \
+		[sel::getCursor $::var::valuText]]
 	switch $breakState {
 	    noBreak {
 		$menu(bps) entryconfigure 3 -label "Add Var Breakpoint"
@@ -569,11 +569,11 @@ proc menu::bpsPostCmd {} {
 		$menu(bps) entryconfigure 4 -label "Enable Var Breakpoint"
 	    }
 	}
-    } elseif {$focusWin == $code::codeWin} {
+    } elseif {$focusWin == $::code::codeWin} {
 	menu::changeState {addLBP disableLBP} normal
 	menu::changeState {addVBP disableVBP} disabled
-	set breakState [icon::getState $code::codeBar \
-		[lindex [split [$code::codeWin index insert] .] 0]]
+	set breakState [icon::getState $::code::codeBar \
+		[lindex [split [$::code::codeWin index insert] .] 0]]
 	switch $breakState {
 	    noBreak {
 		$menu(bps) entryconfigure 0 -label "Add Line Breakpoint"
@@ -628,7 +628,7 @@ proc menu::winPostCmd {} {
 	set code  [list gui::showCode [loc::makeLocation $block {}]]
 	set inst  [blk::isInstrumented $block]
 
-	if {$line < $menu::maxMenuSize} {
+	if {$line < $::menu::maxMenuSize} {
 	    if {$inst} {
 		$menu(win) add command -label "  $file" -command $code
 	    } else {
@@ -661,7 +661,7 @@ proc menu::openDialog {} {
 	{"All files"		*}
     }
 
-    set file [proj::openFileWindow $gui::gui(mainDbgWin) \
+    set file [proj::openFileWindow $::gui::gui(mainDbgWin) \
 	    [pref::prefGet fileOpenDir] $types]
 
     if {[string compare $file ""]} {
@@ -874,21 +874,21 @@ proc menu::changeState {menuList state} {
 #	The toplevel window name of the File Window.
 
 proc menu::showFileWindow {showList} {
-    grab $gui::gui(mainDbgWin)
+    grab $::gui::gui(mainDbgWin)
 
-    if {[info command $gui::gui(fileDbgWin)] == $gui::gui(fileDbgWin)} {
+    if {[info command $::gui::gui(fileDbgWin)] == $::gui::gui(fileDbgWin)} {
 	menu::updateFileWindow $showList
-	wm deiconify $gui::gui(fileDbgWin)
-	focus $menu::selectText
+	wm deiconify $::gui::gui(fileDbgWin)
+	focus $::menu::selectText
     } else {
 	menu::createFileWindow
 	menu::updateFileWindow $showList
-	focus $menu::selectText
+	focus $::menu::selectText
     }    
 
-    grab release $gui::gui(mainDbgWin)
+    grab release $::gui::gui(mainDbgWin)
 
-    return $gui::gui(fileDbgWin)
+    return $::gui::gui(fileDbgWin)
 }
 
 # menu::createFileWindow --
@@ -907,9 +907,9 @@ proc menu::createFileWindow {} {
     set bd 2
     set pad 6
 
-    set top [toplevel $gui::gui(fileDbgWin)]
+    set top [toplevel $::gui::gui(fileDbgWin)]
     ::guiUtil::positionWindow $top 400x250
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
     wm title $top "Windows"
 
     set mainFrm [frame $top.mainFrm -bd 2 -relief raised]
@@ -1032,7 +1032,7 @@ proc menu::showFile {text} {
 #	None.
 
 proc menu::removeFileWindow {} {
-    destroy $gui::gui(fileDbgWin)
+    destroy $::gui::gui(fileDbgWin)
 }
 
 # menu::accKeyPress --

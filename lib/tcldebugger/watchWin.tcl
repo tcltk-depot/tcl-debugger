@@ -76,16 +76,16 @@ proc watch::showWindow {} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(watchDbgWin)] == $gui::gui(watchDbgWin)} {
+    if {[info command $::gui::gui(watchDbgWin)] == $::gui::gui(watchDbgWin)} {
 	watch::updateWindow
-	wm deiconify $gui::gui(watchDbgWin)
-	focus $watch::valuText
-	return $gui::gui(watchDbgWin)
+	wm deiconify $::gui::gui(watchDbgWin)
+	focus $::watch::valuText
+	return $::gui::gui(watchDbgWin)
     } else {
 	watch::createWindow
 	watch::updateWindow
-	focus $watch::valuText
-	return $gui::gui(watchDbgWin)
+	focus $::watch::valuText
+	return $::gui::gui(watchDbgWin)
     }    
 }
 
@@ -113,11 +113,11 @@ proc watch::createWindow {} {
     set pad2 [expr {$pad * 2}]
     array set bar [system::getBar]
 
-    set top [toplevel $gui::gui(watchDbgWin)]
+    set top [toplevel $::gui::gui(watchDbgWin)]
     ::guiUtil::positionWindow $top 400x250
     wm minsize $top 100 100
     wm title $top "Watch Variables"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     # Create the entry for adding new Watch variables.
 
@@ -148,7 +148,7 @@ proc watch::createWindow {} {
     set valuText [text $valuFrm.valuTxt -width 20 -height 20 -bd 0 \
 	    -yscroll [list $valuFrm.sb set]]
     set sb [scrollbar $valuFrm.sb -command {watch::scrollWindow \
-	    $watch::nameText}]
+	    $::watch::nameText}]
 
     pack propagate $vbpFrm 0
     pack $vbpFrm   -side left -fill y
@@ -171,7 +171,7 @@ proc watch::createWindow {} {
     set allBut [button $butFrm.allBut -text "Remove All" \
 	    -command {watch::removeAll} -state disabled] 
     set closeBut [button $butFrm.closeBut -text "Close" \
-	    -command {destroy $gui::gui(watchDbgWin)}] 
+	    -command {destroy $::gui::gui(watchDbgWin)}] 
     pack $inspectBut $remBut $allBut $closeBut -fill x -pady 3
 
     grid $addFrm -row 0 -column 0 -sticky we -padx $pad -pady $pad
@@ -187,15 +187,15 @@ proc watch::createWindow {} {
     # description of the text variable in the namespace eval
     # statement.
 
-    set watch::text(name,$nameText) $nameText
-    set watch::text(name,$valuText) $nameText
-    set watch::text(name,$vbpText)  $nameText
-    set watch::text(valu,$nameText) $valuText
-    set watch::text(valu,$valuText) $valuText
-    set watch::text(valu,$vbpText)  $valuText
-    set watch::text(vbp,$nameText)  $vbpText
-    set watch::text(vbp,$valuText)  $vbpText
-    set watch::text(vbp,$vbpText)   $vbpText
+    set ::watch::text(name,$nameText) $nameText
+    set ::watch::text(name,$valuText) $nameText
+    set ::watch::text(name,$vbpText)  $nameText
+    set ::watch::text(valu,$nameText) $valuText
+    set ::watch::text(valu,$valuText) $valuText
+    set ::watch::text(valu,$vbpText)  $valuText
+    set ::watch::text(vbp,$nameText)  $vbpText
+    set ::watch::text(vbp,$valuText)  $vbpText
+    set ::watch::text(vbp,$vbpText)   $vbpText
 
     # Add all of the common bindings an create the tab focus
     # order for each widget that can get the focus.
@@ -216,10 +216,10 @@ proc watch::createWindow {} {
     # Define the command to be called after each selection event.
     
     sel::setWidgetCmd $valuText all {
-	watch::cleanupSelection $watch::valuText
+	watch::cleanupSelection $::watch::valuText
 	watch::checkState
     } {
-	watch::seeCallback $watch::valuText
+	watch::seeCallback $::watch::valuText
     }
 
     # Define bindings specific to the Watch Window.
@@ -255,7 +255,7 @@ proc watch::updateWindow {} {
     set state [gui::getCurrentState]
     set level [gui::getCurrentLevel]
 
-    if {![winfo exists $gui::gui(watchDbgWin)]} {
+    if {![winfo exists $::gui::gui(watchDbgWin)]} {
 	return
     }
     if {$state == "running"} {
@@ -287,7 +287,7 @@ proc watch::updateWindow {} {
     # var value windows.
 
     if {$state == "running"} {
-	set afterID [after $gui::afterTime [list
+	set afterID [after $::gui::afterTime [list
 		watch::updateInternal $nameText $valuText $vbpText \
 		\{$varInfo\} $level; watch::checkState 
 	]]
@@ -319,7 +319,7 @@ proc watch::resetWindow {msg} {
     variable varList
     variable inspectBut
 
-    if {![winfo exists $gui::gui(watchDbgWin)]} {
+    if {![winfo exists $::gui::gui(watchDbgWin)]} {
 	return
     }
 
@@ -466,19 +466,19 @@ proc watch::checkState {} {
 
     if {([watch::varDataGet $valuText $cursor.0 "exist"] == 1) \
 	    && ([lsearch $lines $cursor] >= 0)} {
-	$watch::inspectBut configure -state normal
+	$::watch::inspectBut configure -state normal
     } else {
-	$watch::inspectBut configure -state disabled
+	$::watch::inspectBut configure -state disabled
     }
     if {$lines == {}} {
-	$watch::remBut configure -state disabled
+	$::watch::remBut configure -state disabled
     } else {
-	$watch::remBut configure -state normal
+	$::watch::remBut configure -state normal
     }	
-    if {$watch::varList == {}} {
-	$watch::allBut configure -state disabled
+    if {$::watch::varList == {}} {
+	$::watch::allBut configure -state disabled
     } else {
-	$watch::allBut configure -state normal
+	$::watch::allBut configure -state normal
     }
     if {[focus] == $valuText} {
 	watch::changeFocus $valuText in
@@ -497,7 +497,7 @@ proc watch::checkState {} {
 #	Returns a list of variable names.
 
 proc watch::getVarList {} {
-    return $watch::varList
+    return $::watch::varList
 }
 
 #  watch::setVarList --
@@ -516,11 +516,11 @@ proc watch::setVarList {vars {dirty 1}} {
     # If the level is empty, then a remote app has connected
     # but has not initialized the GUIs state.
 
-    set watch::varList $vars
+    set ::watch::varList $vars
     if {$dirty} {
 	pref::groupSetDirty Project 1
     }
-    if {[winfo exists $gui::gui(watchDbgWin)]} {
+    if {[winfo exists $::gui::gui(watchDbgWin)]} {
 	watch::updateWindow
     }
     return
@@ -698,7 +698,7 @@ proc watch::VarDataGetScalarValue {oname level {existVar {}}} {
 	return $scalarVarData($oname,$level)
     } else {
 	set exists 0
-	return $watch::noValue
+	return $::watch::noValue
     }
 }
 
@@ -973,7 +973,7 @@ proc watch::updateInternal {nameText valuText vbpText varList level} {
 			varEntry expander handle leftIndent]
 	    }
 	    "n" {
-		$valuText insert end $watch::noValue [list varEntry leftIndent]
+		$valuText insert end $::watch::noValue [list varEntry leftIndent]
 	    }
 	}
 
@@ -1019,8 +1019,8 @@ proc watch::updateInternal {nameText valuText vbpText varList level} {
 #	None.
 
 proc watch::configure {text} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     set lines [sel::getSelectedLines $nameText]
     $nameText tag remove highlight 0.0 end
@@ -1048,9 +1048,9 @@ proc watch::configure {text} {
 #	None.
 
 proc watch::scrollWindow {text args} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
-    set vbpText  $watch::text(vbp,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
+    set vbpText  $::watch::text(vbp,$text)
 
     eval {$text yview} $args
     set yview [lindex [$text yview] 0] 
@@ -1077,9 +1077,9 @@ proc watch::scrollWindow {text args} {
 proc watch::tkTextAutoScan {text} {
     variable priv
 
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
-    set vbpText  $watch::text(vbp,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
+    set vbpText  $::watch::text(vbp,$text)
     set update 1
 
     if {![winfo exists $text]} {
@@ -1107,7 +1107,7 @@ proc watch::tkTextAutoScan {text} {
 	$vbpText  yview moveto $yview
     }
 
-    set watch::priv(afterId,$text) [after 50 watch::tkTextAutoScan $text]
+    set ::watch::priv(afterId,$text) [after 50 watch::tkTextAutoScan $text]
 }
 
 # watch::tkCancelRepeat --
@@ -1141,7 +1141,7 @@ proc watch::tkCancelRepeat {text} {
 #	None.
 
 proc watch::showInspector {text} {
-    set valuText $watch::text(valu,$text)
+    set valuText $::watch::text(valu,$text)
 
     set line  [sel::getCursor $valuText]
     set oname [watch::varDataGet $valuText $line.0 "oname"]
@@ -1198,8 +1198,8 @@ proc watch::showInspectorFromIndex {text index} {
 #	None.
 
 proc watch::toggleVBP {text index toggleType} {
-    set valuText $watch::text(valu,$text)
-    set vbpText  $watch::text(vbp,$text)
+    set valuText $::watch::text(valu,$text)
+    set vbpText  $::watch::text(vbp,$text)
 
     # Dont allow user to toggle VBP state when the GUI's
     # state is not stopped.
@@ -1256,12 +1256,12 @@ proc watch::toggleVBP {text index toggleType} {
     # Depending on what window was updated, tell related windows
     # to update themselves, so all windows have identical state.
 
-    if {$valuText == $var::valuText} {
+    if {$valuText == $::var::valuText} {
 	watch::updateWindow
-	watch::cleanupSelection $var::valuText
-    } elseif {$valuText == $watch::valuText} {
+	watch::cleanupSelection $::var::valuText
+    } elseif {$valuText == $::watch::valuText} {
 	var::updateWindow
-	watch::cleanupSelection $watch::valuText
+	watch::cleanupSelection $::watch::valuText
     } else {
 	watch::updateWindow
 	var::updateWindow
@@ -1284,8 +1284,8 @@ proc watch::toggleVBP {text index toggleType} {
 #	None.
 
 proc watch::expandOrFlattenArray {text index {type {}}} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     if {[watch::varDataGet $valuText "$index linestart" "type"] != "a"} {
 	return
@@ -1317,9 +1317,9 @@ proc watch::expandOrFlattenArray {text index {type {}}} {
 #	The number of lines added.
 
 proc watch::ExpandArray {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
-    set vbpText  $watch::text(vbp,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
+    set vbpText  $::watch::text(vbp,$text)
 
     if {[watch::varDataGet $valuText "$index linestart" "type"] != "a"} {
 	return
@@ -1361,7 +1361,7 @@ proc watch::ExpandArray {text index} {
 	watch::varDataSet $valuText $line.0 \
 		[list oname $scalarName type "a" exist 1 \
 		arrayName $arrayName element $element]
-	set watch::scalarVarData($scalarName,$level) $unsorted($element)
+	set ::watch::scalarVarData($scalarName,$level) $unsorted($element)
 
 	incr line
     }
@@ -1393,9 +1393,9 @@ proc watch::ExpandArray {text index} {
 #	The number of lines removed.
 
 proc watch::FlattenArray {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
-    set vbpText  $watch::text(vbp,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
+    set vbpText  $::watch::text(vbp,$text)
 
     if {[watch::varDataGet $valuText "$index linestart" "type"] != "a"} {
 	return
@@ -1446,8 +1446,8 @@ proc watch::FlattenArray {text index} {
 #	None.
 
 proc watch::changeFocus {text focus} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::changeFocus $valuText $focus
     sel::changeFocus $nameText $focus
@@ -1473,13 +1473,13 @@ proc watch::changeFocus {text focus} {
 #	None.
 
 proc watch::initSelection {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     set index [$text index $index]
-    set sel::selectAnchor($valuText) [lindex [split $index .] 0]
-    set sel::selectAnchor($nameText) [lindex [split $index .] 0]
-    set sel::selectStart($valuText)  [$valuText index "$index linestart"]
+    set ::sel::selectAnchor($valuText) [lindex [split $index .] 0]
+    set ::sel::selectAnchor($nameText) [lindex [split $index .] 0]
+    set ::sel::selectStart($valuText)  [$valuText index "$index linestart"]
 }
 
 # watch::selectAllLines --
@@ -1494,8 +1494,8 @@ proc watch::initSelection {text index} {
 #	None.
 
 proc watch::selectAllLines {text} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::selectAllLines $nameText
     sel::selectAllLines $valuText
@@ -1516,8 +1516,8 @@ proc watch::selectAllLines {text} {
 #	None.
 
 proc watch::selectLine {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     if {![sel::indexPastEnd $text $index]} {
 	set index [$text index $index]
@@ -1544,8 +1544,8 @@ proc watch::selectLine {text index} {
 #	None.
 
 proc watch::selectMultiLine {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     if {[sel::isTagInLine $nameText $index varEntry]} {
 	sel::selectMultiLine $nameText $index
@@ -1568,8 +1568,8 @@ proc watch::selectMultiLine {text index} {
 #	None.
 
 proc watch::selectLineRange {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     if {![sel::indexPastEnd $text $index]} {
 	if {[sel::isTagInLine $nameText $index varEntry]} {
@@ -1595,8 +1595,8 @@ proc watch::selectLineRange {text index} {
 #	None.
 
 proc watch::moveSelection {text amount} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::moveSelection $nameText $amount
     sel::moveSelection $valuText $amount
@@ -1615,8 +1615,8 @@ proc watch::moveSelection {text amount} {
 #	None.
 
 proc watch::moveSelectionRange {text amount} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::moveSelectionRange $nameText $amount
     sel::moveSelectionRange $valuText $amount
@@ -1635,8 +1635,8 @@ proc watch::moveSelectionRange {text amount} {
 #	None.
 
 proc watch::moveCursor {text amount} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::moveCursor $nameText $amount
     sel::moveCursor $valuText $amount
@@ -1654,8 +1654,8 @@ proc watch::moveCursor {text amount} {
 #	None.
 
 proc watch::moveCursorToIndex {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::moveCursorToIndex $nameText $index
     sel::moveCursorToIndex $valuText $index
@@ -1673,8 +1673,8 @@ proc watch::moveCursorToIndex {text index} {
 #	None.
 
 proc watch::selectCursor {text} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::selectCursor $nameText
     sel::selectCursor $valuText
@@ -1692,8 +1692,8 @@ proc watch::selectCursor {text} {
 #	None.
 
 proc watch::selectCursorRange {text} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::selectCursorRange $nameText
     sel::selectCursorRange $valuText
@@ -1711,8 +1711,8 @@ proc watch::selectCursorRange {text} {
 #	None.
 
 proc watch::toggleCursor {text} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     sel::toggleCursor $nameText
     sel::toggleCursor $valuText
@@ -1729,8 +1729,8 @@ proc watch::toggleCursor {text} {
 #	None.
 
 proc watch::copy {text} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
 
     # Create a list that collates the highlighted name text
     # with the highlighted value text.  Be careful to trim
@@ -1767,9 +1767,9 @@ proc watch::copy {text} {
 #	None.
 
 proc watch::cleanupSelection {text} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
-    set vbpText  $watch::text(vbp,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
+    set vbpText  $::watch::text(vbp,$text)
 
     foreach line [sel::getSelectedLines $nameText] {
 	if {![sel::isTagInLine $nameText $line.0 varEntry]} {
@@ -1803,9 +1803,9 @@ proc watch::cleanupSelection {text} {
 #	None.
 
 proc watch::seeCallback {text index} {
-    set nameText $watch::text(name,$text)
-    set valuText $watch::text(valu,$text)
-    set vbpText  $watch::text(vbp,$text)
+    set nameText $::watch::text(name,$text)
+    set valuText $::watch::text(valu,$text)
+    set vbpText  $::watch::text(vbp,$text)
 
     $nameText see $index
     $valuText see $index

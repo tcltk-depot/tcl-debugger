@@ -235,13 +235,13 @@ proc gui::showMainWindow {} {
     # Invoke the appropriate menu times to ensure that the display
     # reflects the user's preferences.
 
-    eval [$menu::menu(view) entrycget Toolbar -command]
-    eval [$menu::menu(view) entrycget Status -command]
-    eval [$menu::menu(view) entrycget Result -command]
-    eval [$menu::menu(view) entrycget {Line Numbers} -command]
+    eval [$::menu::menu(view) entrycget Toolbar -command]
+    eval [$::menu::menu(view) entrycget Status -command]
+    eval [$::menu::menu(view) entrycget Result -command]
+    eval [$::menu::menu(view) entrycget {Line Numbers} -command]
 
     gui::changeState new
-    focus -force $stack::stackText
+    focus -force $::stack::stackText
 
     return $gui(mainDbgWin)
 }
@@ -290,8 +290,8 @@ proc gui::resetWindow {{msg {}}} {
 
     # If the error window is present, remove it.
 
-    if {[winfo exists $gui::gui(errorDbgWin)]} {
-	destroy $gui::gui(errorDbgWin)
+    if {[winfo exists $::gui::gui(errorDbgWin)]} {
+	destroy $::gui::gui(errorDbgWin)
     }
 
     stack::resetWindow $msg
@@ -313,7 +313,7 @@ proc gui::resetWindow {{msg {}}} {
     # Remove cached blocks
     file::update 1
 
-    focus $stack::stackText
+    focus $::stack::stackText
     return
 }
 
@@ -361,11 +361,11 @@ proc gui::createDbgWindow {mainDbgWin} {
     guiUtil::paneCreate $dataFrm $codeFrm \
 	    -in $dbgFrm -orient vertical -percent 0.3
 
-    bind::addBindTags $stack::stackText mainDbgWin
-    bind::addBindTags $var::valuText    mainDbgWin
-    bind::addBindTags $code::codeWin    mainDbgWin
+    bind::addBindTags $::stack::stackText mainDbgWin
+    bind::addBindTags $::var::valuText    mainDbgWin
+    bind::addBindTags $::code::codeWin    mainDbgWin
     bind::commonBindings mainDbgWin [list \
-	    $stack::stackText $var::valuText $code::codeWin]
+	    $::stack::stackText $::var::valuText $::code::codeWin]
     return $dbgFrm
 }
 
@@ -407,7 +407,7 @@ proc gui::showCode {loc} {
 
 proc gui::resultHandler {id code result errCode errInfo} {
     if {[info exists gui::afterID]} {
-	after cancel $gui::afterID
+	after cancel $::gui::afterID
     }
     evalWin::evalResult $id $code $result $errCode $errInfo
 
@@ -416,7 +416,7 @@ proc gui::resultHandler {id code result errCode errInfo} {
     gui::changeState stopped
 
     gui::updateStatusMessage -state 1 -msg "eval result"
-    set gui::msgAfterID [after $gui::afterTime {
+    set ::gui::msgAfterID [after $::gui::afterTime {
 	gui::updateStatusMessage -state 1 -msg [gui::getCurrentState]
     }]
     return
@@ -518,10 +518,10 @@ proc gui::userbreakHandler {args} {
 
 proc gui::stoppedHandler {breakType} {
     if {[info exists gui::afterID]} {
-	after cancel $gui::afterID
+	after cancel $::gui::afterID
     }
     if {[info exists gui::msgAfterID]} {
-	after cancel $gui::msgAfterID
+	after cancel $::gui::msgAfterID
     }
     file::update
     gui::setCurrentBreak $breakType
@@ -548,10 +548,10 @@ proc gui::stoppedHandler {breakType} {
 
 proc gui::exitHandler {} {
     if {[info exists gui::afterID]} {
-	after cancel $gui::afterID
+	after cancel $::gui::afterID
     }
     if {[info exists gui::msgAfterID]} {
-	after cancel $gui::msgAfterID
+	after cancel $::gui::msgAfterID
     }
 
     # Remote projects stay alive for further connections.
@@ -618,7 +618,7 @@ proc gui::instrumentHandler {status block} {
     # current messages.
 
     if {[info exists gui::msgAfterID]} {
-	after cancel $gui::msgAfterID
+	after cancel $::gui::msgAfterID
     }
 
     if {$status == "start"} {
@@ -631,7 +631,7 @@ proc gui::instrumentHandler {status block} {
 	# code window if the file being instrument was the one
 	# we are currently displaying.
 
-	set gui::msgAfterID [after $gui::afterTime {
+	set ::gui::msgAfterID [after $::gui::afterTime {
 	    gui::updateStatusMessage -state 1 -msg [gui::getCurrentState]
 	}]
 	if {[gui::getCurrentBlock] == $block} {
@@ -662,7 +662,7 @@ proc gui::instrumentErrorHandler {loc} {
 
     set errorMsg [lindex $::errorCode end]
     if {[info exists gui::afterID]} {
-	after cancel $gui::afterID
+	after cancel $::gui::afterID
     }
     gui::resetWindow
 
@@ -705,15 +705,15 @@ proc gui::attachHandler {projName} {
     # event.
 
     gui::changeState running
-    set gui::afterID [after $gui::afterTime {
+    set ::gui::afterID [after $::gui::afterTime {
 	if {[proj::isRemoteProj]} {
 	    gui::run "dbg::step any"
 	} else {
-	    gui::run $gui::attachCmd
+	    gui::run $::gui::attachCmd
 	}
-	set gui::attachCmd {}
+	set ::gui::attachCmd {}
     }]
-    set gui::msgAfterID [after $gui::afterTime "
+    set ::gui::msgAfterID [after $::gui::afterTime "
 	gui::updateStatusMessage -state 1 -msg \
 		[list [list $projName] application attached]
     "]
@@ -755,7 +755,7 @@ proc gui::quit {} {
 
 proc gui::start {cmd} {
     if {[proj::isRemoteProj]} {
-	set gui::attachCmd "dbg::step any"
+	set ::gui::attachCmd "dbg::step any"
 	set result 1
     } else {
 	if {![proj::checkProj]} {
@@ -812,7 +812,7 @@ proc gui::start {cmd} {
 	    } elseif {$cmd == "dbg::step"} {
 		set cmd "dbg::step any"
 	    }
-	    set gui::attachCmd $cmd
+	    set ::gui::attachCmd $cmd
 
 	    set result 1
 	}
@@ -838,7 +838,7 @@ proc gui::run {cmd} {
 
     # Dismiss the error dialog and take the default action
 
-    if {[winfo exists $gui::gui(errorDbgWin)]} {
+    if {[winfo exists $::gui::gui(errorDbgWin)]} {
 	gui::handleError
     }
 
@@ -854,13 +854,13 @@ proc gui::run {cmd} {
 
     gui::setCurrentBreak {}
     gui::changeState running
-    set gui::afterID [after $gui::afterTime {
+    set ::gui::afterID [after $::gui::afterTime {
 	stack::resetWindow {}
 	var::resetWindow   {}
 	code::resetWindow  {}
 	evalWin::resetWindow {}
     }]
-    set gui::msgAfterID [after $gui::afterTime {
+    set ::gui::msgAfterID [after $::gui::afterTime {
 	gui::updateStatusMessage -state 1 -msg "running"
     }]
 
@@ -878,7 +878,7 @@ proc gui::run {cmd} {
 #	None.
 
 proc gui::runTo {} {
-    set loc [code::makeCodeLocation $code::codeWin [code::getInsertLine].0]
+    set loc [code::makeCodeLocation $::code::codeWin [code::getInsertLine].0]
     gui::run [list dbg::run $loc]
     return
 }
@@ -896,7 +896,7 @@ proc gui::runTo {} {
 
 proc gui::kill {} {
     if {[info exists gui::afterID]} {
-	after cancel $gui::afterID
+	after cancel $::gui::afterID
     }
     set state [getCurrentState]
 
@@ -966,12 +966,12 @@ proc gui::changeState {state} {
 		run stepIn stepOut stepOver stepTo stepResult stop kill restart
 	    } disabled
 
-	    if {![bind::tagExists $stack::stackText disableButtons]} {
-		bind::addBindTags $stack::stackText \
+	    if {![bind::tagExists $::stack::stackText disableButtons]} {
+		bind::addBindTags $::stack::stackText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::valuText \
+		bind::addBindTags $::var::valuText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::nameText \
+		bind::addBindTags $::var::nameText \
 			{mainDbgWin disableKeys disableButtons}
 	    }
 	}
@@ -979,12 +979,12 @@ proc gui::changeState {state} {
 	    tool::changeState {
 		run stepIn stepOut stepOver stepTo stepResult stop kill restart
 	    } disabled
-	    if {![bind::tagExists $stack::stackText disableButtons]} {
-		bind::addBindTags $stack::stackText \
+	    if {![bind::tagExists $::stack::stackText disableButtons]} {
+		bind::addBindTags $::stack::stackText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::valuText \
+		bind::addBindTags $::var::valuText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::nameText \
+		bind::addBindTags $::var::nameText \
 			{mainDbgWin disableKeys disableButtons}
 	    }
 	}
@@ -1004,16 +1004,16 @@ proc gui::changeState {state} {
 		tool::changeState restart disabled
 	    }
 
-	    if {[bind::tagExists $stack::stackText disableButtons]} {
-		bind::removeBindTag $stack::stackText mainDbgWin
-		bind::removeBindTag $stack::stackText disableKeys
-		bind::removeBindTag $stack::stackText disableButtons
-		bind::removeBindTag $var::valuText    mainDbgWin
-		bind::removeBindTag $var::valuText    disableKeys
-		bind::removeBindTag $var::valuText    disableButtons
-		bind::removeBindTag $var::nameText    mainDbgWin
-		bind::removeBindTag $var::nameText    disableKeys
-		bind::removeBindTag $var::nameText    disableButtons
+	    if {[bind::tagExists $::stack::stackText disableButtons]} {
+		bind::removeBindTag $::stack::stackText mainDbgWin
+		bind::removeBindTag $::stack::stackText disableKeys
+		bind::removeBindTag $::stack::stackText disableButtons
+		bind::removeBindTag $::var::valuText    mainDbgWin
+		bind::removeBindTag $::var::valuText    disableKeys
+		bind::removeBindTag $::var::valuText    disableButtons
+		bind::removeBindTag $::var::nameText    mainDbgWin
+		bind::removeBindTag $::var::nameText    disableKeys
+		bind::removeBindTag $::var::nameText    disableButtons
 	    }
 	    watch::varDataReset
 	    stack::updateWindow [dbg::getLevel]
@@ -1034,12 +1034,12 @@ proc gui::changeState {state} {
 		tool::changeState restart disabled
 	    }
 
-	    if {![bind::tagExists $stack::stackText disableButtons]} {
-		bind::addBindTags $stack::stackText \
+	    if {![bind::tagExists $::stack::stackText disableButtons]} {
+		bind::addBindTags $::stack::stackText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::valuText \
+		bind::addBindTags $::var::valuText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::nameText \
+		bind::addBindTags $::var::nameText \
 			{mainDbgWin disableKeys disableButtons}
 	    }
 	}
@@ -1056,12 +1056,12 @@ proc gui::changeState {state} {
 		stepOut stepOver stepTo stepResult stop kill restart
 	    } disabled
 
-	    if {![bind::tagExists $stack::stackText disableButtons]} {
-		bind::addBindTags $stack::stackText \
+	    if {![bind::tagExists $::stack::stackText disableButtons]} {
+		bind::addBindTags $::stack::stackText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::valuText \
+		bind::addBindTags $::var::valuText \
 			{mainDbgWin disableKeys disableButtons}
-		bind::addBindTags $var::nameText \
+		bind::addBindTags $::var::nameText \
 			{mainDbgWin disableKeys disableButtons}
 	    }
 	}
@@ -1204,7 +1204,7 @@ proc gui::setDbgTextBindings {w {sb {}}} {
 
     $w tag configure disable -bg gray12 -borderwidth 0 -bgstipple gray12
     $w tag configure handle -foreground blue
-    $w tag configure message -font $font::metrics(-fontItalic)
+    $w tag configure message -font $::font::metrics(-fontItalic)
     $w tag configure left -justify right
     $w tag configure center -justify center
     $w tag configure right -justify right
@@ -1220,27 +1220,27 @@ proc gui::setDbgTextBindings {w {sb {}}} {
     # Define the status window messages.
 
     $w tag bind stackLevel <Enter> {
-	set gui::gui(statusMsgVar) \
+	set ::gui::gui(statusMsgVar) \
 		"Stack level as used by upvar."
     }
     $w tag bind stackType <Enter> {
-	set gui::gui(statusMsgVar) \
+	set ::gui::gui(statusMsgVar) \
 		"Scope of the stack frame."
     }
     $w tag bind stackProc <Enter> {
-	set gui::gui(statusMsgVar) \
+	set ::gui::gui(statusMsgVar) \
 		"Name of the procedure called."
     }
     $w tag bind stackArg <Enter> {
-	set gui::gui(statusMsgVar) \
+	set ::gui::gui(statusMsgVar) \
 		"Argument passed to the procedure of this stack."
     }
     $w tag bind varName <Enter> {
-	set gui::gui(statusMsgVar) \
+	set ::gui::gui(statusMsgVar) \
 		"The name of the variable"
     }
     $w tag bind varValu <Enter> {
-	set gui::gui(statusMsgVar) \
+	set ::gui::gui(statusMsgVar) \
 		"The value of the variable."
     }
 }
@@ -1334,7 +1334,7 @@ proc gui::scrollDbgTextX {scrollbar geoCmd offset size} {
 #	is still necessary to check for window existence.
 
 proc gui::getDbgText {} {
-    return $gui::gui(dbgText)
+    return $::gui::gui(dbgText)
 }
 
 # gui::updateDbgText --
@@ -1419,7 +1419,7 @@ proc gui::formatText {text side} {
     gui::unformatText $text
 
     if {$side == "left"} {
-	$gui::fileText xview moveto 1
+	$::gui::fileText xview moveto 1
     }
 
     # Get a list of all the viewable lines and cache the
@@ -1621,11 +1621,11 @@ proc gui::getFormattedTextWidgets {} {
 # 	Either line, var, error or cmdresult.
 
 proc gui::getCurrentBreak {} {
-    return $gui::gui(currentBreak)
+    return $::gui::gui(currentBreak)
 }
 
 proc gui::setCurrentBreak {type} {
-    set gui::gui(currentBreak) $type
+    set ::gui::gui(currentBreak) $type
 }
 
 # gui::getCurrentArgs --
@@ -1640,11 +1640,11 @@ proc gui::setCurrentBreak {type} {
 #	The current args or empty string if none exists.
 
 proc gui::getCurrentArgs {} {
-    return $gui::gui(currentArgs)
+    return $::gui::gui(currentArgs)
 }
 
 proc gui::setCurrentArgs {argList} {
-    set gui::gui(currentArgs) $argList
+    set ::gui::gui(currentArgs) $argList
 }
 
 # gui::getCurrentBlock --
@@ -1659,11 +1659,11 @@ proc gui::setCurrentArgs {argList} {
 #	The current args or empty string if none exists.
 
 proc gui::getCurrentBlock {} {
-    return $gui::gui(currentBlock)
+    return $::gui::gui(currentBlock)
 }
 
 proc gui::setCurrentBlock {blk} {
-    set gui::gui(currentBlock) $blk
+    set ::gui::gui(currentBlock) $blk
 }
 
 # gui::getCurrentFile --
@@ -1678,11 +1678,11 @@ proc gui::setCurrentBlock {blk} {
 #	The current args or empty string if none exists.
 
 proc gui::getCurrentFile {} {
-    return $gui::gui(currentFile)
+    return $::gui::gui(currentFile)
 }
 
 proc gui::setCurrentFile {file} {
-    set gui::gui(currentFile) $file
+    set ::gui::gui(currentFile) $file
 }
 
 # gui::getCurrentLevel --
@@ -1696,11 +1696,11 @@ proc gui::setCurrentFile {file} {
 #	The current stack level or empty string if none exists.
 
 proc gui::getCurrentLevel {} {
-    return $gui::gui(currentLevel)
+    return $::gui::gui(currentLevel)
 }
 
 proc gui::setCurrentLevel {level} {
-    set gui::gui(currentLevel) $level
+    set ::gui::gui(currentLevel) $level
 }
 
 # gui::getCurrentLine --
@@ -1714,11 +1714,11 @@ proc gui::setCurrentLevel {level} {
 #	The current line or empty string if none exists.
 
 proc gui::getCurrentLine {} {
-    return $gui::gui(currentLine)
+    return $::gui::gui(currentLine)
 }
 
 proc gui::setCurrentLine {line} {
-    set gui::gui(currentLine) $line
+    set ::gui::gui(currentLine) $line
 }
 
 # gui::getCurrentPC --
@@ -1732,11 +1732,11 @@ proc gui::setCurrentLine {line} {
 #	The current PC location.
 
 proc gui::getCurrentPC {} {
-    return $gui::gui(currentPC)
+    return $::gui::gui(currentPC)
 }
 
 proc gui::setCurrentPC {pc} {
-    set gui::gui(currentPC) $pc
+    set ::gui::gui(currentPC) $pc
 }
 
 # gui::getCurrentProc --
@@ -1752,11 +1752,11 @@ proc gui::setCurrentPC {pc} {
 #	The current proc name or empty string if none exists.
 
 proc gui::getCurrentProc {} {
-    return $gui::gui(currentProc)
+    return $::gui::gui(currentProc)
 }
 
 proc gui::setCurrentProc {procName} {
-    set gui::gui(currentProc) $procName
+    set ::gui::gui(currentProc) $procName
 }
 
 # gui::getCurrentScope --
@@ -1772,11 +1772,11 @@ proc gui::setCurrentProc {procName} {
 #	The current scope.
 
 proc gui::getCurrentScope {} {
-    return $gui::gui(currentScope)
+    return $::gui::gui(currentScope)
 }
 
 proc gui::setCurrentScope {scope} {
-    set gui::gui(currentScope) $scope
+    set ::gui::gui(currentScope) $scope
 }
 
 # gui::getCurrentState --
@@ -1790,11 +1790,11 @@ proc gui::setCurrentScope {scope} {
 #	The current state.
 
 proc gui::getCurrentState {} {
-    return $gui::gui(currentState)
+    return $::gui::gui(currentState)
 }
 
 proc gui::setCurrentState {state} {
-    set gui::gui(currentState) $state
+    set ::gui::gui(currentState) $state
 }
 
 # gui::getCurrentType --
@@ -1810,11 +1810,11 @@ proc gui::setCurrentState {state} {
 #	The current stack type or empty string if none exists.
 
 proc gui::getCurrentType {} {
-    return $gui::gui(currentType)
+    return $::gui::gui(currentType)
 }
 
 proc gui::setCurrentType {type} {
-    set gui::gui(currentType) $type
+    set ::gui::gui(currentType) $type
 }
 
 # gui::getCurrentVer --
@@ -1829,11 +1829,11 @@ proc gui::setCurrentType {type} {
 #	The current block version.
 
 proc gui::getCurrentVer {} {
-    return $gui::gui(currentVer)
+    return $::gui::gui(currentVer)
 }
 
 proc gui::setCurrentVer {ver} {
-    set gui::gui(currentVer) $ver
+    set ::gui::gui(currentVer) $ver
 }
 
 #-----------------------------------------------------------------------------
@@ -1923,10 +1923,10 @@ proc gui::updateStatusMessage {args} {
     # gui array.
 
     if {$a(-msg) == {}} {
-	set a(-msg) $gui::gui(statusStateMsg)
+	set a(-msg) $::gui::gui(statusStateMsg)
     }
     if {$a(-state)} {
-	set gui::gui(statusStateMsg) $a(-msg)
+	set ::gui::gui(statusStateMsg) $a(-msg)
     }
     $infoText delete 0.0 end
     $infoText insert 0.0 $a(-msg)
@@ -2057,7 +2057,7 @@ proc gui::updateStatusFileFormat {} {
 	unset afterStatus($fileText)
     }
     set afterStatus($fileText) [after 50 {
-	gui::formatText $gui::fileText left
+	gui::formatText $::gui::fileText left
     }]
 }
 
@@ -2078,14 +2078,14 @@ proc gui::updateStatusFileFormat {} {
 proc gui::registerStatusMessage {win msg {delay 1000}} {
     bind $win <Enter> "
 	if \{\[%W cget -state\] == \"normal\"\} \{
-	    set gui::afterStatus(%W) \[after $delay \\
+	    set ::gui::afterStatus(%W) \[after $delay \\
 		    \{gui::updateStatusMessage -msg \[list $msg\]\}\]
 	\}
     "
     bind $win <Leave> "
 	if \{\[info exists gui::afterStatus(%W)\]\} \{
-	    after cancel \$gui::afterStatus(%W)
-	    unset gui::afterStatus(%W)
+	    after cancel \$::gui::afterStatus(%W)
+	    unset ::gui::afterStatus(%W)
 	    gui::updateStatusMessage -msg {}
 	\}
     "
@@ -2111,16 +2111,16 @@ proc gui::registerStatusMessage {win msg {delay 1000}} {
 #	The name of the toplevel window.
 
 proc gui::showErrorWindow {level loc errMsg errStack errCode} {
-    if {[info command $gui::gui(errorDbgWin)] == $gui::gui(errorDbgWin)} {
+    if {[info command $::gui::gui(errorDbgWin)] == $::gui::gui(errorDbgWin)} {
 	gui::updateErrorWindow $level $loc $errMsg $errStack $errCode
-	wm deiconify $gui::gui(errorDbgWin)
-	focus -force $gui::gui(errorDbgWin)
-	return $gui::gui(errorDbgWin)
+	wm deiconify $::gui::gui(errorDbgWin)
+	focus -force $::gui::gui(errorDbgWin)
+	return $::gui::gui(errorDbgWin)
     } else {
 	gui::createErrorWindow
 	gui::updateErrorWindow $level $loc $errMsg $errStack $errCode
-	focus -force $gui::gui(errorDbgWin)
-	return $gui::gui(errorDbgWin)
+	focus -force $::gui::gui(errorDbgWin)
+	return $::gui::gui(errorDbgWin)
     }
 }
 
@@ -2140,10 +2140,10 @@ proc gui::createErrorWindow {} {
     variable errorInfoSuppress
     variable errorInfoDeliver
 
-    set top [toplevel $gui::gui(errorDbgWin)]
+    set top [toplevel $::gui::gui(errorDbgWin)]
     wm title $top "Tcl Error"
     wm minsize  $top 100 100
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     set bd 2
     set pad  6
@@ -2217,7 +2217,7 @@ running the script.\nThis error will be caught by the application."
 	$errorInfoDeliver configure -default active
 	focus $errorInfoDeliver
     }
-    $gui::errorInfoText insert 0.0 "$errStack"
+    $::gui::errorInfoText insert 0.0 "$errStack"
 }
 
 # gui::handleError --
@@ -2248,7 +2248,7 @@ proc gui::handleError {{option {}}} {
 	    }
 	}
     }
-    destroy $gui::gui(errorDbgWin)
+    destroy $::gui::gui(errorDbgWin)
     return
 }
 
@@ -2268,16 +2268,16 @@ proc gui::handleError {{option {}}} {
 #	The name of the top level window.
 
 proc gui::showParseErrorWindow {msg} {
-    if {[info command $gui::gui(parseDbgWin)] == $gui::gui(parseDbgWin)} {
+    if {[info command $::gui::gui(parseDbgWin)] == $::gui::gui(parseDbgWin)} {
 	gui::updateParseErrorWindow $msg
-	wm deiconify $gui::gui(parseDbgWin)
-	focus -force $gui::gui(parseDbgWin)
-	return $gui::gui(parseDbgWin)
+	wm deiconify $::gui::gui(parseDbgWin)
+	focus -force $::gui::gui(parseDbgWin)
+	return $::gui::gui(parseDbgWin)
     } else {
 	gui::createParseErrorWindow
 	gui::updateParseErrorWindow $msg
-	focus -force $gui::gui(parseDbgWin)
-	return $gui::gui(parseDbgWin)
+	focus -force $::gui::gui(parseDbgWin)
+	return $::gui::gui(parseDbgWin)
     }
 }
 
@@ -2294,10 +2294,10 @@ proc gui::showParseErrorWindow {msg} {
 proc gui::createParseErrorWindow {} {
     variable parseInfoText
 
-    set top [toplevel $gui::gui(parseDbgWin)]
+    set top [toplevel $::gui::gui(parseDbgWin)]
     wm title $top "Parse Error"
     wm minsize  $top 100 100
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
     wm protocol $top WM_DELETE_WINDOW { }
 
     set bd 2
@@ -2375,8 +2375,8 @@ proc gui::updateParseErrorWindow {msg} {
 proc gui::handleParseError {option} {
     variable parseErrorVar
 
-    grab release $gui::gui(parseDbgWin)
-    destroy $gui::gui(parseDbgWin)
+    grab release $::gui::gui(parseDbgWin)
+    destroy $::gui::gui(parseDbgWin)
     set parseErrorVar $option
     return
 }
@@ -2398,8 +2398,8 @@ proc gui::handleParseError {option} {
 #	name is returned immediately.
 
 proc gui::showAboutWindow {} {
-    if {[info exists debugger::parameters(aboutCmd)]} {
-	return [eval $debugger::parameters(aboutCmd)]
+    if {[info exists ::debugger::parameters(aboutCmd)]} {
+	return [eval $::debugger::parameters(aboutCmd)]
     }
 
     catch {destroy .about}
@@ -2572,7 +2572,7 @@ proc gui::showConnectStatus {{update {}}} {
 	wm title $w "Connection Status"
 	::guiUtil::positionWindow $w 
 	wm minsize  $w 100 100
-	wm transient $w $gui::gui(mainDbgWin)
+	wm transient $w $::gui::gui(mainDbgWin)
 	
 	set m [frame $w.mainFrm -bd 2 -relief raised]
 	pack $m -fill both -expand true -padx 6 -pady 6

@@ -1725,7 +1725,7 @@ proc dbg::InitializeNub {nubVersion tclVersion clientData} {
 #	None.
 
 proc dbg::initInstrument {} {
-    if {$dbg::appState != "dead"} {
+    if {$::dbg::appState != "dead"} {
 	SendAsync set DbgNub(dynProc)      [pref::prefGet instrumentDynamic]
 	SendAsync set DbgNub(includeFiles) [pref::prefGet doInstrument]
 	SendAsync set DbgNub(excludeFiles) [pref::prefGet dontInstrument]
@@ -1746,7 +1746,7 @@ proc dbg::initInstrument {} {
 #	Return the tcl_version of the running app.
 
 proc dbg::getAppVersion {} {
-    return $dbg::appVersion
+    return $::dbg::appVersion
 }
 
 # dbg::isLocalhost --

@@ -39,16 +39,16 @@ proc bp::showWindow {} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(breakDbgWin)] == $gui::gui(breakDbgWin)} {
+    if {[info command $::gui::gui(breakDbgWin)] == $::gui::gui(breakDbgWin)} {
 	bp::updateWindow
-	wm deiconify $gui::gui(breakDbgWin)
-	focus $bp::breakText
-	return $gui::gui(breakDbgWin)
+	wm deiconify $::gui::gui(breakDbgWin)
+	focus $::bp::breakText
+	return $::gui::gui(breakDbgWin)
     } else {
 	bp::createWindow
 	bp::updateWindow
-	focus $bp::breakText
-	return $gui::gui(breakDbgWin)
+	focus $::bp::breakText
+	return $::gui::gui(breakDbgWin)
     }    
 }
 
@@ -69,11 +69,11 @@ proc bp::createWindow {} {
     variable remBut
     variable allBut
 
-    set breakDbgWin [toplevel $gui::gui(breakDbgWin)]
+    set breakDbgWin [toplevel $::gui::gui(breakDbgWin)]
     ::guiUtil::positionWindow $breakDbgWin 400x250
     wm minsize  $breakDbgWin 100 100
     wm title $breakDbgWin "Breakpoints"
-    wm transient $breakDbgWin $gui::gui(mainDbgWin)
+    wm transient $breakDbgWin $::gui::gui(mainDbgWin)
 
     set pad 3
     array set bar [system::getBar]
@@ -106,7 +106,7 @@ proc bp::createWindow {} {
     set allBut  [button $butFrm.allBut -text "Remove All" \
 	    -command {bp::removeAll} -state disabled]
     set closeBut  [button $butFrm.closeBut -text "Close" \
-	    -command {destroy $gui::gui(breakDbgWin)}]
+	    -command {destroy $::gui::gui(breakDbgWin)}]
     pack $showBut $remBut $allBut $closeBut -fill x -padx $pad -pady 3
 
     grid $breakLbl -row 0 -column 0 -sticky nwe -columnspan 2 -padx 4
@@ -187,7 +187,7 @@ proc bp::updateWindow {} {
     # If the window is not current mapped, then there is no need to 
     # update the display.
 
-    if {![winfo exists $gui::gui(breakDbgWin)]} {
+    if {![winfo exists $::gui::gui(breakDbgWin)]} {
 	return
     }
 
@@ -233,7 +233,7 @@ proc bp::updateWindow {} {
 
 	    set file [file tail $file]
 	    if {$file == {}} {
-		set file $bp::dynamicBlock
+		set file $::bp::dynamicBlock
 	    }
 
 	    # The tab stop of the breakText text widget is large enough
@@ -330,8 +330,8 @@ proc bp::updateWindow {} {
 #	None.
 
 proc bp::scrollWindow {args} {
-    eval {$bp::breakText yview} $args
-    $bp::breakBar yview moveto [lindex [$bp::breakText yview] 0]
+    eval {$::bp::breakText yview} $args
+    $::bp::breakBar yview moveto [lindex [$::bp::breakText yview] 0]
 }
 
 # bp::showCode --
@@ -483,7 +483,7 @@ proc bp::checkState {} {
     # If the window is not current mapped, then there is no need to 
     # update the display.
 
-    if {![winfo exists $gui::gui(breakDbgWin)]} {
+    if {![winfo exists $::gui::gui(breakDbgWin)]} {
 	return
     }
 

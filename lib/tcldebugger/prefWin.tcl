@@ -59,14 +59,14 @@ proc prefWin::showWindow {} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(prefDbgWin)] == $gui::gui(prefDbgWin)} {
-	wm deiconify $gui::gui(prefDbgWin)
-	focus $gui::gui(prefDbgWin)
-	return $gui::gui(prefDbgWin)
+    if {[info command $::gui::gui(prefDbgWin)] == $::gui::gui(prefDbgWin)} {
+	wm deiconify $::gui::gui(prefDbgWin)
+	focus $::gui::gui(prefDbgWin)
+	return $::gui::gui(prefDbgWin)
     } else {
 	prefWin::createWindow
-	focus $gui::gui(prefDbgWin)
-	return $gui::gui(prefDbgWin)
+	focus $::gui::gui(prefDbgWin)
+	return $::gui::gui(prefDbgWin)
     }    
 }
 
@@ -94,10 +94,10 @@ proc prefWin::createWindow {} {
 	unset focusOrder
     }
 
-    set top [toplevel $gui::gui(prefDbgWin)]
+    set top [toplevel $::gui::gui(prefDbgWin)]
     wm minsize  $top 100 100
     wm title $top "Preferences"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
     ::guiUtil::positionWindow $top
 
     pref::groupNew  TempPref
@@ -258,7 +258,7 @@ proc prefWin::Apply {destroy} {
     system::saveDefaultPrefs 0
 
     if {$destroy} {
-	destroy $gui::gui(prefDbgWin)
+	destroy $::gui::gui(prefDbgWin)
     }
     return
 }
@@ -414,7 +414,7 @@ proc prefWin::createColorWindow {mainFrm} {
 #	None.
 
 proc prefWin::chooseColor {but pref} {
-    set w $gui::gui(prefDbgWin)
+    set w $::gui::gui(prefDbgWin)
     grab $w
 
     set initialColor [$but cget -bg]

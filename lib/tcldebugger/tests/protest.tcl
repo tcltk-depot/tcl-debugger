@@ -49,7 +49,7 @@ namespace eval ::protest {
 	    irix    irix-mips ]
 
     foreach {pmatch plat} $platformList {
-	if {[regexp -nocase $pmatch $tcl_platform(os)]} {
+	if {[regexp -nocase $pmatch $::tcl_platform(os)]} {
 	    variable platform $plat
 	}   
     }
@@ -372,7 +372,7 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 	    exit 1
 	}
     } else {
-	if {$tcl_platform(platform) == "windows"} {
+	if {$::tcl_platform(platform) == "windows"} {
 	    set ::protest::toolsDirectory \
 		    //pop/tools/$::protest::currentVersion(Tools)/${::protest::platform}/bin 
 	} else {
@@ -427,13 +427,13 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 	file mkdir $::protest::interpreterDirectory
     }
  #    set exeFullPath [file join $::protest::interpreterDirectory $exe]
- #    if {[string equal $tcl_platform(platform) "windows"]} {
+ #    if {[string equal $::tcl_platform(platform) "windows"]} {
 	# # Windows file needs .bat extension
  	
 	# set tclScript "$exeFullPath.tcl"
  # 	append exeFullPath ".bat"
  #    }
- #    if {[string equal $tcl_platform(platform) "windows"]} {
+ #    if {[string equal $::tcl_platform(platform) "windows"]} {
 	# set fd [open $exeFullPath w]
 	# puts $fd [list $interp $tclScript "%*"]
 	# set fd2 [open $tclScript w]
@@ -449,7 +449,7 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 	# close $fd
  #    }
 
- #    if {[string equal $tcl_platform(platform) "unix"]} {
+ #    if {[string equal $::tcl_platform(platform) "unix"]} {
 	# # Unix files need executable permissions
 	
 	# file attrib $exeFullPath -permissions 0777
@@ -472,7 +472,7 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
     }
 
     # Set the DISPLAY environment variable if it doesn't already exist.
-    if {$tcl_platform(platform) == "unix" && ![info exists ::env(DISPLAY)]} {
+    if {$::tcl_platform(platform) == "unix" && ![info exists ::env(DISPLAY)]} {
 	set ::env(DISPLAY) weasel:0.0
     }
 
@@ -514,7 +514,7 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
     
     if {$::tcltest::debug > 1} {
 	puts "::protest::platform = $::protest::platform"
-	if {$tcl_platform(platform) == "unix"} {
+	if {$::tcl_platform(platform) == "unix"} {
 	    puts "::env(DISPLAY) = $::env(DISPLAY)"
 	}
     }

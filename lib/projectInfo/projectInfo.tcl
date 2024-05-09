@@ -151,7 +151,7 @@ on usage and redistribution of this file.
     # locations if needed (testing licenses, for example)
 
     variable prefsRoot {}
-    if {$tcl_platform(platform) == "windows"} {
+    if {$::tcl_platform(platform) == "windows"} {
         set prefsRoot "HKEY_CURRENT_USER\\SOFTWARE\\Scriptics\\$productName"
     } else {
         set prefsRoot [file join ~ .$productName]

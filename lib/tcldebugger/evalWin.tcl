@@ -38,16 +38,16 @@ proc evalWin::showWindow {} {
     # If the window already exists, show it, otherwise
     # create it from scratch.
 
-    if {[info command $gui::gui(evalDbgWin)] == $gui::gui(evalDbgWin)} {
+    if {[info command $::gui::gui(evalDbgWin)] == $::gui::gui(evalDbgWin)} {
 	# evalWin::updateWindow
-	wm deiconify $gui::gui(evalDbgWin)
-	focus $evalWin::evalText
-	return $gui::gui(evalDbgWin)
+	wm deiconify $::gui::gui(evalDbgWin)
+	focus $::evalWin::evalText
+	return $::gui::gui(evalDbgWin)
     } else {
 	evalWin::createWindow
 	evalWin::updateWindow
-	focus $evalWin::evalText
-	return $gui::gui(evalDbgWin)
+	focus $::evalWin::evalText
+	return $::gui::gui(evalDbgWin)
     }    
 }
 
@@ -68,12 +68,12 @@ proc evalWin::createWindow {} {
     set bd 2
     set pad 6
 
-    set top [toplevel $gui::gui(evalDbgWin)]
+    set top [toplevel $::gui::gui(evalDbgWin)]
     ::guiUtil::positionWindow $top 400x250
     wm protocol $top WM_DELETE_WINDOW "wm withdraw $top"
     wm minsize $top 100 100
     wm title $top "Eval Console"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     # Create the level indicator and combo box.
 
@@ -84,7 +84,7 @@ proc evalWin::createWindow {} {
 	    -textvariable gui::gui(evalLevelVar) -strict 1 \
 	    -listheight 1 -listwidth 8 -listexportselection 0]
     set closeBut [button $levelFrm.closeBut -text "Close" -width 10 \
-	    -command {destroy $gui::gui(evalDbgWin)}]
+	    -command {destroy $::gui::gui(evalDbgWin)}]
     pack $levelLbl -side left
     pack $levelCombo -side left -padx 3
     pack $closeBut -side right
@@ -140,7 +140,7 @@ proc evalWin::updateWindow {} {
     variable levelCombo
     variable afterID
 
-    if {![winfo exists $gui::gui(evalDbgWin)]} {
+    if {![winfo exists $::gui::gui(evalDbgWin)]} {
 	return
     }
 
@@ -153,7 +153,7 @@ proc evalWin::updateWindow {} {
     # look of the console by removing the disabled tags.
     
     $evalText tag remove disable 0.0 "end + 1 lines"
-    bind::removeBindTag $evalWin::evalText disableKeys
+    bind::removeBindTag $::evalWin::evalText disableKeys
 
     set state [gui::getCurrentState]
     if {$state == "stopped"} {
@@ -161,7 +161,7 @@ proc evalWin::updateWindow {} {
 	# and set the display in the combo entry to the top
 	# stack level.
 
-	set thisLevel $gui::gui(evalLevelVar)
+	set thisLevel $::gui::gui(evalLevelVar)
 	$levelCombo del 0 end
 	set levels [evalWin::getLevels]
 	eval {$levelCombo add} $levels
@@ -173,14 +173,14 @@ proc evalWin::updateWindow {} {
 
 	set lastLevel [lindex $levels end]
 	if {([gui::getCurrentBreak] == "result") && $thisLevel < $lastLevel} {
-	    set gui::gui(evalLevelVar) $thisLevel
+	    set ::gui::gui(evalLevelVar) $thisLevel
 	} else {
-	    set gui::gui(evalLevelVar) $lastLevel
+	    set ::gui::gui(evalLevelVar) $lastLevel
 	}
     } elseif {$state == "running"} {
 	# Append the bindtag that will disable key strokes.
 	bind::addBindTags $evalText disableKeys
-	set afterID [after $gui::afterTime ::evalWin::resetWindow]
+	set afterID [after $::gui::afterTime ::evalWin::resetWindow]
     } else {
 	evalWin::resetWindow
     }
@@ -203,7 +203,7 @@ proc evalWin::resetWindow {{msg {}}} {
     variable evalText
     variable levelCombo
 
-    if {![winfo exists $gui::gui(evalDbgWin)]} {
+    if {![winfo exists $::gui::gui(evalDbgWin)]} {
 	return
     }
 
@@ -225,7 +225,7 @@ proc evalWin::resetWindow {{msg {}}} {
 #	The "pid" of the command.
 
 proc evalWin::evalCmd {cmd} {
-    return [gui::run [list dbg::evaluate $gui::gui(evalLevelVar) $cmd]]
+    return [gui::run [list dbg::evaluate $::gui::gui(evalLevelVar) $cmd]]
 }
 
 # evalWin::evalResult --

@@ -208,7 +208,7 @@ proc initProjectFiles {dummy} {
     proj::saveProj $nowriteProj
     pref::groupDelete Project
 
-    if {$tcl_platform(platform) == "windows"} {
+    if {$::tcl_platform(platform) == "windows"} {
 	file attribute $nowriteProj -readonly 1
 	set exeName tclsh$::protest::currentVersion(Tcl-short)
     } else {
@@ -287,7 +287,7 @@ proc cleanProjectFiles {} {
 	return
     }
 
-    if {$tcl_platform(platform) == "windows"} {
+    if {$::tcl_platform(platform) == "windows"} {
 	file attribute $nowriteProj -readonly 0
     } else {
 	file attribute $noreadProj  -permissions 0755

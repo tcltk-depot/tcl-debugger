@@ -191,7 +191,7 @@ proc guiUtil::paneGeometry {master} {
 	place $pane(2)    -relheight [expr {1.0 - $pane(-percent)}]
 	set pane(size) [winfo height $master]
     }
-    set guiUtil::paneGeom($master) $pane(-percent)
+    set ::guiUtil::paneGeom($master) $pane(-percent)
 }
 
 #-----------------------------------------------------------------------------
@@ -224,7 +224,7 @@ proc guiUtil::tableCreate {master frm1 frm2 args} {
     set t(-justify) left
     array set t $args
     if {[info exists guiUtil::paneGeom($master)]} {
-	set t(-percent) $guiUtil::paneGeom($master)
+	set t(-percent) $::guiUtil::paneGeom($master)
     }
 
     # Keep state in an array associated with the master frame.
@@ -382,7 +382,7 @@ proc guiUtil::tableGeometry {master} {
     }
 
     set pane(size) [winfo width $master]
-    set guiUtil::paneGeom($master) $pane(-percent)
+    set ::guiUtil::paneGeom($master) $pane(-percent)
 }
 
 #-----------------------------------------------------------------------------
@@ -433,7 +433,7 @@ proc guiUtil::ComboBox {ComboBox args} {
 
     set entry [entry $ComboBox.e -bd 0]
     set arrow [label $ComboBox.arrow -relief raised \
-	    -image $image::image(comboArrow)]
+	    -image $::image::image(comboArrow)]
     bind $arrow <1> "guiUtil::ComboBox_popup $ComboBox $w"
     pack $entry -side left -fill both -expand true
     pack $arrow -side left -fill y
@@ -441,14 +441,14 @@ proc guiUtil::ComboBox {ComboBox args} {
     bind $list <ButtonRelease-1> "guiUtil::ComboBox_popdown $ComboBox $w"
     bind $list <Return> "guiUtil::ComboBox_popdown $ComboBox $w"
     bind $entry <Return>  "
-	if {\$guiUtil::comboCommand($ComboBox) != {}} {
-	    uplevel #0 \$guiUtil::comboCommand($ComboBox)
+	if {\$::guiUtil::comboCommand($ComboBox) != {}} {
+	    uplevel #0 \$::guiUtil::comboCommand($ComboBox)
 	}   
     "
     bind $entry <Up> "guiUtil::ComboBox_popup $ComboBox $w"
     bind $entry <Down> "guiUtil::ComboBox_popup $ComboBox $w"
-    bind $w <Leave> {set guiUtil::comboCursor out}
-    bind $w <Enter> {set guiUtil::comboCursor in}
+    bind $w <Leave> {set ::guiUtil::comboCursor out}
+    bind $w <Enter> {set ::guiUtil::comboCursor in}
     bind $w <1> guiUtil::testRemoveGrab
     wm withdraw $w
 
@@ -496,8 +496,8 @@ proc guiUtil::ComboBox_set {ComboBox args} {
 	$ComboBox.e insert end [lindex $args 0]
     }
     $ComboBox.e xview end
-    if {$guiUtil::comboCommand($ComboBox) != {}} {
-	uplevel #0 $guiUtil::comboCommand($ComboBox)
+    if {$::guiUtil::comboCommand($ComboBox) != {}} {
+	uplevel #0 $::guiUtil::comboCommand($ComboBox)
     }
 }
 
@@ -637,7 +637,7 @@ proc guiUtil::ComboBox_configure { ComboBox args} {
 		    $w.frm.list configure -$realOption $option 
 		}
 		"-command" {
-		    set guiUtil::comboCommand($ComboBox) $option
+		    set ::guiUtil::comboCommand($ComboBox) $option
 		}
 		"-cursor" { 
 		    $ComboBox.e configure -cursor $option
@@ -693,8 +693,8 @@ proc guiUtil::ComboBox_popdown { {frame .f} {win .combobox} } {
 	}
     }
     $frame.e xview end
-    if {$guiUtil::comboCommand($frame) != {}} {
-	uplevel #0 $guiUtil::comboCommand($frame)
+    if {$::guiUtil::comboCommand($frame) != {}} {
+	uplevel #0 $::guiUtil::comboCommand($frame)
     }
     guiUtil::removeGrab
 }
@@ -1005,7 +1005,7 @@ proc guiUtil::saveGeometry {win} {
 #	None.
 
 proc guiUtil::restorePaneGeometry {} {
-    array set guiUtil::paneGeom [pref::prefGet paneGeom GlobalDefault] 
+    array set ::guiUtil::paneGeom [pref::prefGet paneGeom GlobalDefault] 
     return
 }
 

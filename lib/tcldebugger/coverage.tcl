@@ -79,18 +79,18 @@ proc coverage::checkState {text} {
 
     set state [gui::getCurrentState]
     if {$state != "stopped"} {
-	$coverage::clearAllBut configure -state disabled
+	$::coverage::clearAllBut configure -state disabled
     } else {
-	$coverage::clearAllBut configure -state normal
+	$::coverage::clearAllBut configure -state normal
     }
 
     set cursor [sel::getCursor $text]
     if {[lsearch -exact [$coverText tag names $cursor.0] fileName] < 0} {
-	$coverage::showBut configure -state disabled
-	$coverage::clearBut configure -state disabled
+	$::coverage::showBut configure -state disabled
+	$::coverage::clearBut configure -state disabled
     } else {
-	$coverage::showBut configure -state normal
-	$coverage::clearBut configure -state normal
+	$::coverage::showBut configure -state normal
+	$::coverage::clearBut configure -state normal
     }
 
     if {[focus] == $coverText} {
@@ -211,7 +211,7 @@ proc coverage::createWindow {} {
     ::guiUtil::positionWindow $top 400x225
     wm minsize $top 175 100
     wm title $top "Code Coverage"
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     set bd 2
     set pad  6
@@ -268,10 +268,10 @@ proc coverage::createWindow {} {
     gui::setDbgTextBindings $coverText $sb
 
     sel::setWidgetCmd $coverText all {
-	coverage::checkState $coverage::coverText
+	coverage::checkState $::coverage::coverText
     }
     bind coverDbgWin <<Dbg_ShowCode>> {
-	coverage::showCode $coverage::coverText
+	coverage::showCode $::coverage::coverText
 	break
     }
     bind $coverText <Double-1> {
@@ -342,9 +342,9 @@ proc coverage::highlightRanges {blk} {
     
     # remove any prior "*covered*" tags
 
-    foreach tag [$code::codeWin tag names] {
+    foreach tag [$::code::codeWin tag names] {
 	if {[regexp "covered" $tag]} {
-	    $code::codeWin tag remove $tag 0.0 end
+	    $::code::codeWin tag remove $tag 0.0 end
 	}
     }
     
@@ -359,7 +359,7 @@ proc coverage::highlightRanges {blk} {
 	    set range [lindex [split $index :] 2]
 	    tagRange $blk $range uncovered
 	}
-	$code::codeWin tag configure uncovered -background $color
+	$::code::codeWin tag configure uncovered -background $color
     } else {
 
 	# For each <step> times a line is covered, its intensity is
@@ -403,7 +403,7 @@ proc coverage::highlightRanges {blk} {
 	    # #<shade>00<shade>
 
 	    set shade [format "%x" $shade]
-	    $code::codeWin tag configure "covered${intensity}" \
+	    $::code::codeWin tag configure "covered${intensity}" \
 		-background "\#${shade}00${shade}" -foreground white
 	}
     }
@@ -423,11 +423,11 @@ proc coverage::init {} {
     variable coverageEnabled
 
     if {$coverageEnabled} {
-        tool::addButton $image::image(win_cover) $image::image(win_cover) \
+        tool::addButton $::image::image(win_cover) $::image::image(win_cover) \
 	    {Display the Code Coverage Window.} coverage::showWindow
 
 	# Add an entry to the View menu.
-	$menu::menu(view) insert "Connection status*" command \
+	$::menu::menu(view) insert "Connection status*" command \
 		-label "Code Coverage..." \
 		-command coverage::showWindow -underline 0
     }
@@ -454,8 +454,8 @@ proc coverage::resetWindow {{msg {}}} {
 	return
     }
 
-    $coverage::radio(cvr) configure -state disabled
-    $coverage::radio(uncvr) configure -state disabled
+    $::coverage::radio(cvr) configure -state disabled
+    $::coverage::radio(uncvr) configure -state disabled
 
     $coverText delete 0.0 end
     checkState $coverText
@@ -519,12 +519,12 @@ proc coverage::showWindow {} {
     if {[winfo exists $coverWin]} {
 	coverage::updateWindow
 	wm deiconify $coverWin
-	focus $coverage::coverText
+	focus $::coverage::coverText
 	return $coverWin
     } else {
 	coverage::createWindow
 	coverage::updateWindow
-	focus $coverage::coverText
+	focus $::coverage::coverText
 	return $coverWin
     }
 }
@@ -563,7 +563,7 @@ proc coverage::tabulateCoverage {coverage} {
 	}
     }
 
-    for {set blk 1} {$blk <= $blk::blockCounter} {incr blk} {
+    for {set blk 1} {$blk <= $::blk::blockCounter} {incr blk} {
 
 	# Optimization:  Only calculate all possible ranges if
 	# currentUncoverage($blk) doesn't exist.  Once all possible
@@ -614,17 +614,17 @@ proc coverage::tagRange {blk range tag} {
     set start [parse charindex $src $range]
     set end   [expr {$start + [parse charlength $src $range]}]
     
-    set cmdStart [$code::codeWin index "0.0 + $start chars"]
-    set cmdMid   [$code::codeWin index "$cmdStart lineend"]
-    set cmdEnd   [$code::codeWin index "0.0 + $end chars"]
+    set cmdStart [$::code::codeWin index "0.0 + $start chars"]
+    set cmdMid   [$::code::codeWin index "$cmdStart lineend"]
+    set cmdEnd   [$::code::codeWin index "0.0 + $end chars"]
 
     # If cmdEnd > cmdMid, the range spans multiple lines, we only
     # want to tag the first line.
-    if {[$code::codeWin compare $cmdEnd > $cmdMid]} {
+    if {[$::code::codeWin compare $cmdEnd > $cmdMid]} {
 	set cmdEnd $cmdMid
     }
 
-    $code::codeWin tag add $tag $cmdStart $cmdEnd
+    $::code::codeWin tag add $tag $cmdStart $cmdEnd
 }
 
 # coverage::updateWindow --
@@ -660,7 +660,7 @@ proc coverage::updateWindow {} {
     set state [gui::getCurrentState]
     if {$state != "stopped"} {
 	if {$state == "running"} {
-	    set afterID [after $gui::afterTime ::coverage::resetWindow]
+	    set afterID [after $::gui::afterTime ::coverage::resetWindow]
 	} else {
 	    coverage::resetWindow
 	}
@@ -684,17 +684,17 @@ proc coverage::updateWindow {} {
 	}
     }
 
-    $coverage::radio(cvr) configure -state normal
-    $coverage::radio(uncvr) configure -state normal
+    $::coverage::radio(cvr) configure -state normal
+    $::coverage::radio(uncvr) configure -state normal
     $coverText yview moveto $yview
     coverage::checkState $coverText
-    highlightRanges $gui::gui(currentBlock)
+    highlightRanges $::gui::gui(currentBlock)
 
     # restore the blue or red color if one was previously present
 
-    $code::codeWin tag configure highlight \
+    $::code::codeWin tag configure highlight \
 	-background [pref::prefGet highlight]
-    $code::codeWin tag configure highlight_error \
+    $::code::codeWin tag configure highlight_error \
 	-background [pref::prefGet highlight_error]
 }
 

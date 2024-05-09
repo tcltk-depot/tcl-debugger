@@ -24,12 +24,12 @@ namespace eval proj {
 
     # The project file extension string.
 
-    variable projFileExt $projectInfo::debuggerProjFileExt
+    variable projFileExt $::projectInfo::debuggerProjFileExt
 
     # The file types to use for all Project file dialogs.
 
     set projFileTypes [list \
-	    [list "$::debugger::parameters(productName) Project Files" *$proj::projFileExt] \
+	    [list "$::debugger::parameters(productName) Project Files" *$::proj::projFileExt] \
 	    [list "All files" *]]
 
     # The vwait variable that is set when BrowseFileWindow locates
@@ -87,7 +87,7 @@ proc proj::openProjCmd {{file {}}} {
 #	the user canceled the opening of the project file.
 
 proc proj::openProjDialog {} {
-    set file [proj::openFileWindow [gui::getParent] {} $proj::projFileTypes]
+    set file [proj::openFileWindow [gui::getParent] {} $::proj::projFileTypes]
     if {$file != {}} {
 	set file [proj::checkOpenProjDialog $file]
     }
@@ -137,7 +137,7 @@ proc proj::checkOpenProjDialog {file} {
     if {![file exists $file]} {
         proj::RemoveRecentProj $file
 	set file [proj::fileMissingWindow "Project file " \
-		$file $proj::projFileTypes]
+		$file $::proj::projFileTypes]
     }
 
     # If the project window is opened, destroy it now, so it does 
@@ -389,7 +389,7 @@ proc proj::saveProjCmd {{file {}}} {
 	
 	set proj [file tail [proj::getProjectPath]]
 	set proj [string range $proj 0 [expr {[string length $proj] - 5}]]
-	wm title $gui::gui(mainDbgWin) "$::debugger::parameters(productName): $proj"
+	wm title $::gui::gui(mainDbgWin) "$::debugger::parameters(productName): $proj"
 	projWin::updateWindow "Project: $proj"
  
 	return 0
@@ -423,7 +423,7 @@ proc proj::saveAsProjCmd {} {
 	
 	set proj [file tail [proj::getProjectPath]]
 	set proj [string range $proj 0 [expr {[string length $proj] - 5}]]
-	wm title $gui::gui(mainDbgWin) "$::debugger::parameters(productName): $proj"
+	wm title $::gui::gui(mainDbgWin) "$::debugger::parameters(productName): $proj"
 	projWin::updateWindow "Project: $proj"
 
 	return 0
@@ -526,7 +526,7 @@ proc proj::saveProjDialog {} {
 proc proj::saveAsProjDialog {file} {
     return [proj::saveAsFileWindow [gui::getParent] \
 	    [file dirname $file] [file tail $file] \
-	    $proj::projFileTypes $proj::projFileExt]
+	    $::proj::projFileTypes $::proj::projFileExt]
 }
 
 # proj::saveProj --
@@ -618,7 +618,7 @@ proc proj::restartProj {} {
 #	The project path.
  
 proc proj::getProjectPath {} {
-    return $proj::projectPath
+    return $::proj::projectPath
 }
 
 # proj::setProjectPath --
@@ -632,7 +632,7 @@ proc proj::getProjectPath {} {
 #	None.
 
 proc proj::setProjectPath {path} {
-    set proj::projectPath $path
+    set ::proj::projectPath $path
     return
 }
 
@@ -648,7 +648,7 @@ proc proj::setProjectPath {path} {
 #	Return 1 if a project file is open, return 0 if no project is open.
 
 proc proj::isProjectOpen {} {
-    return $proj::projectOpen
+    return $::proj::projectOpen
 }
 
 # proj::projectNeverSaved --
@@ -663,7 +663,7 @@ proc proj::isProjectOpen {} {
 #	Return 1 if a the file has never been saved
 
 proc proj::projectNeverSaved {} {
-    return $proj::projectNeverSaved
+    return $::proj::projectNeverSaved
 }
 
 # proj::checkProj --
@@ -850,8 +850,8 @@ proc proj::applyThisProjCmd {destroy} {
 	set script [lindex [pref::prefGet appScriptList TempProj] 0]
 	if {($dir == {}) && ($script != {})} {
 	    set dir   [file dirname $script]
-	    set dList [projWin::AddToCombo $projWin::dirCombo $dir]
-	    $projWin::dirCombo set $dir
+	    set dList [projWin::AddToCombo $::projWin::dirCombo $dir]
+	    $::projWin::dirCombo set $dir
 	    pref::prefSet Project appDirList $dList
 	}
     }
@@ -941,7 +941,7 @@ proc proj::applyDefaultProjCmd {destroy} {
 proc proj::fileMissingWindow {prefix path types} {
     proj::ShowFileMissingWindow $prefix $path $types
     vwait proj::fileFound
-    return $proj::fileFound
+    return $::proj::fileFound
 }
 
 # proj::saveAsFileWindow --
@@ -970,7 +970,7 @@ proc proj::saveAsFileWindow {parent dir file {types {}} {ext {}}} {
 	set dir [pref::prefGet fileOpenDir]
     }
     if {$file == {}} {
-	set file [file::getUntitledFile $dir Untitled $proj::projFileExt]
+	set file [file::getUntitledFile $dir Untitled $::proj::projFileExt]
     }
 
     # If types is empty, then use the default values.
@@ -1092,10 +1092,10 @@ proc proj::openComboFileWindow {combo types} {
 #	None.
 
 proc proj::ShowFileMissingWindow {prefix path types} {
-    set top [toplevel $gui::gui(projMissingWin)]
+    set top [toplevel $::gui::gui(projMissingWin)]
     wm title $top "Project File Not Found"
     wm minsize  $top 100 100
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     set bd       2
     set pad      6
@@ -1108,7 +1108,7 @@ proc proj::ShowFileMissingWindow {prefix path types} {
 
     set w [winfo screenwidth .]
     set h [winfo screenheight .]
-    wm geometry $gui::gui(projMissingWin) \
+    wm geometry $::gui::gui(projMissingWin) \
 	    +[expr {($w/2) - ($width/2)}]+[expr {($h/2) - ($height/2)}]
 
     set msg "$prefix\"$path\" not found.  Press Browse to locate the file."
@@ -1153,9 +1153,9 @@ proc proj::BrowseFileMissingWindow {path types} {
     if {![file exists $dir]} {
         set dir [pwd]
     }
-    set proj::fileFound [proj::openFileWindow [gui::getParent] $dir $types]
+    set ::proj::fileFound [proj::openFileWindow [gui::getParent] $dir $types]
 
-    destroy $gui::gui(projMissingWin)
+    destroy $::gui::gui(projMissingWin)
     return
 }
 
@@ -1171,8 +1171,8 @@ proc proj::BrowseFileMissingWindow {path types} {
 #	None.
 
 proc proj::CancelFileMissingWindow {} {
-    set proj::fileFound {}
-    destroy $gui::gui(projMissingWin)
+    set ::proj::fileFound {}
+    destroy $::gui::gui(projMissingWin)
     return
 }
 
@@ -1191,7 +1191,7 @@ proc proj::InitNewProj {} {
     # Set the variable that indicate Debugger has an open project
     # and the global pref to indicate the project path.
 
-    set proj::projectOpen 1
+    set ::proj::projectOpen 1
     set projPath [proj::getProjectPath]
 
     # Invoke all of the update routines to ensure we notice any changes

@@ -85,13 +85,13 @@ proc projWin::showWindow {title {aCmd {}} {dCmd {}}} {
     variable applyCmd
     variable destroyCmd
 
-    if {[info command $gui::gui(projSettingWin)] == {}} {
+    if {[info command $::gui::gui(projSettingWin)] == {}} {
 	projWin::createWindow
-	focus $gui::gui(projSettingWin)
+	focus $::gui::gui(projSettingWin)
     } else {
 	projWin::DestroyWindow	
 	projWin::createWindow
-	focus $gui::gui(projSettingWin)
+	focus $::gui::gui(projSettingWin)
     }
 
     set applyCmd   $aCmd
@@ -125,9 +125,9 @@ proc projWin::createWindow {} {
 	unset focusOrder
     }
 
-    set top [toplevel $gui::gui(projSettingWin)]
+    set top [toplevel $::gui::gui(projSettingWin)]
     wm minsize   $top 100 100
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
     ::guiUtil::positionWindow $top
 
     pref::groupNew  TempProj
@@ -201,12 +201,12 @@ proc projWin::updateWindow {{title {}}} {
     variable localRad
     variable remoteRad
 
-    if {[info command $gui::gui(projSettingWin)] == {}} {
+    if {[info command $::gui::gui(projSettingWin)] == {}} {
 	return
     }
 
     if {$title != {}} {
-	wm title $gui::gui(projSettingWin) $title
+	wm title $::gui::gui(projSettingWin) $title
     }
 
     set state [gui::getCurrentState]
@@ -255,7 +255,7 @@ proc projWin::updateWindow {{title {}}} {
 #	Return a boolean, 1 if the window is open.
 
 proc projWin::isOpen {} {
-    return [expr {[info command $gui::gui(projSettingWin)] != {}}]
+    return [expr {[info command $::gui::gui(projSettingWin)] != {}}]
 }
 
 # projWin::ApplyProjSettings --
@@ -312,7 +312,7 @@ proc projWin::CancelProjSettings {} {
 	uplevel #0 $destroyCmd 1
     }
     projWin::DestroyWindow
-    focus -force $gui::gui(mainDbgWin)
+    focus -force $::gui::gui(mainDbgWin)
     return
 }
 
@@ -330,8 +330,8 @@ proc projWin::DestroyWindow {} {
     if {[pref::groupExists TempProj]} {
 	pref::groupDelete TempProj
     }
-    if {[info command $gui::gui(projSettingWin)] != {}} {
-	destroy $gui::gui(projSettingWin)
+    if {[info command $::gui::gui(projSettingWin)] != {}} {
+	destroy $::gui::gui(projSettingWin)
     }
     return
 }
@@ -635,8 +635,8 @@ proc projWin::ShowDebuggingType {mainFrm type} {
     variable portEnt     
     variable focusOrder
 
-    wm geometry $gui::gui(projSettingWin) \
-	    [winfo geometry $gui::gui(projSettingWin)]
+    wm geometry $::gui::gui(projSettingWin) \
+	    [winfo geometry $::gui::gui(projSettingWin)]
 
     if {$type == "local"} {
 	pack forget $remoteFrm
@@ -813,9 +813,8 @@ proc projWin::CreateNoInstruFilesWindow {mainFrm} {
     }
     bind $instEnt <Return> {break}
     bind $instEnt <<Paste>> {
-	global tcl_platform
 	catch {
-	    if {[string compare $tcl_platform(platform) "unix"]} {
+	    if {[string compare $::tcl_platform(platform) "unix"]} {
 		catch {
 		    %W delete sel.first sel.last
 		}
@@ -1078,7 +1077,7 @@ proc projWin::CheckInstruFilesState {} {
 	    break
 	}
     }
-    $projWin::remNoBut configure -state $state
+    $::projWin::remNoBut configure -state $state
 
     set state disabled
     set lines [sel::getSelectedLines $doInstText]
@@ -1088,7 +1087,7 @@ proc projWin::CheckInstruFilesState {} {
 	    break
 	}
     }
-    $projWin::remDoBut configure -state $state
+    $::projWin::remDoBut configure -state $state
 
     if {[focus] == $noInstText} {
 	sel::changeFocus $noInstText in

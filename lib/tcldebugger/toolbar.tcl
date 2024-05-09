@@ -33,60 +33,60 @@ proc tool::createWindow {mainDbgWin} {
 
     set toolbarFrm [frame $mainDbgWin.tool -bd 2 -relief groove]
 
-    set tool(run) [tool::createButton $toolbarFrm.runButt $image::image(run)  \
+    set tool(run) [tool::createButton $toolbarFrm.runButt $::image::image(run)  \
 	    {Run until break or EOF.} \
 	    {gui::run dbg::run}]
-    set tool(into) [tool::createButton $toolbarFrm.intoButt $image::image(into) \
+    set tool(into) [tool::createButton $toolbarFrm.intoButt $::image::image(into) \
 	    {Step into the next procedure.} \
 	    {gui::run dbg::step}]
-    set tool(over) [tool::createButton $toolbarFrm.overButt $image::image(over) \
+    set tool(over) [tool::createButton $toolbarFrm.overButt $::image::image(over) \
 	    {Step over the next procedure.} \
 	    {gui::run {dbg::step over}}]
-    set tool(out) [tool::createButton $toolbarFrm.outButt $image::image(out)  \
+    set tool(out) [tool::createButton $toolbarFrm.outButt $::image::image(out)  \
 	    {Step out of the current procedure.} \
 	    {gui::run {dbg::step out}}]
-    set tool(to) [tool::createButton $toolbarFrm.toButt $image::image(to)  \
+    set tool(to) [tool::createButton $toolbarFrm.toButt $::image::image(to)  \
 	    {Run to cursor.} \
 	    {gui::runTo}]
     set tool(cmdresult) [tool::createButton $toolbarFrm.cmdresultButt \
-	    $image::image(cmdresult)  \
+	    $::image::image(cmdresult)  \
 	    {Step to result of current command.} \
 	    {gui::run {dbg::step cmdresult}}]
     pack [frame $toolbarFrm.sep1 -bd 4 -relief groove -width 2] \
 	    -pady 2 -fill y -side left
-    set tool(stop) [tool::createButton $toolbarFrm.stopButt $image::image(stop) \
+    set tool(stop) [tool::createButton $toolbarFrm.stopButt $::image::image(stop) \
 	    {Stop at the next instrumented statement.} \
 	    {gui::interrupt}]
-    set tool(kill) [tool::createButton $toolbarFrm.killButt $image::image(kill) \
+    set tool(kill) [tool::createButton $toolbarFrm.killButt $::image::image(kill) \
 	    {Kill the current application.} \
 	    {gui::kill}]
     set tool(restart) [tool::createButton $toolbarFrm.restartButt \
-	    $image::image(restart) \
+	    $::image::image(restart) \
 	    {Restart the application.} \
             {proj::restartProj}]
     pack [frame $toolbarFrm.sep2 -bd 4 -relief groove -width 2] \
 	    -pady 2 -fill y -side left
     set tool(refreshFile) [tool::createButton $toolbarFrm.refreshFileButt \
-	    $image::image(refreshFile) \
+	    $::image::image(refreshFile) \
 	    {Refresh the current file.} \
             {menu::refreshFile}]
 
     pack [frame $toolbarFrm.sep3 -bd 4 -relief groove -width 2] \
 	    -pady 2 -fill y -side left
     set tool(win_break) [tool::createButton $toolbarFrm.win_breakButt \
-	    $image::image(win_break) \
+	    $::image::image(win_break) \
 	    {Display the Breakpoint Window.} \
 	    {bp::showWindow}]
     set tool(win_eval) [tool::createButton $toolbarFrm.win_evalButt \
-	    $image::image(win_eval) \
+	    $::image::image(win_eval) \
 	    {Display the Eval Console Window.} \
 	    {evalWin::showWindow}]
     set tool(win_proc) [tool::createButton $toolbarFrm.win_procButt \
-	    $image::image(win_proc) \
+	    $::image::image(win_proc) \
 	    {Display the Procedure Window.} \
 	    {procWin::showWindow}]
     set tool(win_watch) [tool::createButton $toolbarFrm.win_watchButt \
-	    $image::image(win_watch) \
+	    $::image::image(win_watch) \
 	    {Display the Watch Variables Window.} \
 	    {watch::showWindow}]
 
@@ -285,9 +285,9 @@ proc tool::changeButtonState {but state} {
     variable tool
 
     if {$state == "disabled"} {
-	$tool($but) configure -image $image::image(${but}_disable)
+	$tool($but) configure -image $::image::image(${but}_disable)
     } else {
-	$tool($but) configure -image $image::image($but)
+	$tool($but) configure -image $::image::image($but)
     }		    
 }
 

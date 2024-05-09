@@ -33,18 +33,18 @@ namespace eval portWin {
 #	The next OK port to use.
 
 proc portWin::showWindow {port} {
-    if {[info command $gui::gui(errorPortWin)] == $gui::gui(errorPortWin)} {
-	wm deiconify $gui::gui(errorPortWin)
+    if {[info command $::gui::gui(errorPortWin)] == $::gui::gui(errorPortWin)} {
+	wm deiconify $::gui::gui(errorPortWin)
     } else {
 	portWin::CreateWindow
     }
 
     portWin::UpdateWindow $port
-    focus -force $portWin::portEnt
-    grab $gui::gui(errorPortWin)
+    focus -force $::portWin::portEnt
+    grab $::gui::gui(errorPortWin)
 
     vwait portWin::newPortVar
-    return $portWin::newPortVar
+    return $::portWin::newPortVar
 }
 
 # portWin::CreateWindow --
@@ -68,16 +68,16 @@ proc portWin::CreateWindow {} {
     set width  350
     set height  50
 
-    set top [toplevel $gui::gui(errorPortWin)]
+    set top [toplevel $::gui::gui(errorPortWin)]
     wm title     $top "Error Opening Port"
     wm minsize   $top 100 100
-    wm transient $top $gui::gui(mainDbgWin)
+    wm transient $top $::gui::gui(mainDbgWin)
 
     # Center window on the screen.
 
     set w [winfo screenwidth .]
     set h [winfo screenheight .]
-    wm geometry $gui::gui(errorPortWin) \
+    wm geometry $::gui::gui(errorPortWin) \
 	    +[expr {($w/2) - ($width/2)}]+[expr {($h/2) - ($height/2)}]
 
     set mainFrm  [frame $top.mainFrm -bd $bd -relief raised]
@@ -175,8 +175,8 @@ proc portWin::ApplyWindow {} {
 
     set port [$portEnt get]
     if {[portWin::isPortValid $port]} {
-	grab release $gui::gui(errorPortWin)
-	destroy $gui::gui(errorPortWin)
+	grab release $::gui::gui(errorPortWin)
+	destroy $::gui::gui(errorPortWin)
 	set ::portWin::newPortVar $port
     } else {
 	bell
