@@ -3,9 +3,9 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_REVISION($Id: configure.in,v 1.14 2005/03/18 01:23:31 hobbs Exp $)
 
-AC_INIT([tclparser], [1.8])
+AC_INIT([tclparser], [1.9])
 
-TEA_INIT([3.9])
+TEA_INIT([3.13])
 
 AC_CONFIG_AUX_DIR(tclconfig)
 

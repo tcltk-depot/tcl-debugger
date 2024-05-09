@@ -65,21 +65,21 @@ EXTERN int Tclparser_Init (Tcl_Interp *interp);
 
 static int	ParseMakeTokenList (char *script,
 		    Tcl_Parse *parsePtr, int index, Tcl_Obj **resultPtr);
-static Tcl_Obj *ParseMakeRange (char *script, CONST char *start,
+static Tcl_Obj *ParseMakeRange (char *script, const char *start,
 		    int end);
 static int	ParseObjCmd (ClientData clientData,
-		    Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+		    Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static void	ParseSetErrorCode (Tcl_Interp *interp,
 		    char *script, Tcl_Parse *parsePtr);
-static int	ParseCommand (Tcl_Interp *interp, char *script, 
+static int	ParseCommand (Tcl_Interp *interp, char *script,
 		    int index, int length);
-static int	ParseExpr (Tcl_Interp *interp, char *script, 
+static int	ParseExpr (Tcl_Interp *interp, char *script,
 		    int index, int length);
-static int	ParseList (Tcl_Interp *interp, char *script, 
+static int	ParseList (Tcl_Interp *interp, char *script,
 		    int index, int length);
-static int	ParseVarName (Tcl_Interp *interp, char *script, 
+static int	ParseVarName (Tcl_Interp *interp, char *script,
 		    int index, int length);
-static int	ParseGetString (Tcl_Interp *interp, char *script, 
+static int	ParseGetString (Tcl_Interp *interp, char *script,
 		    int index, int length);
 static int	ParseCharIndex (Tcl_Interp *interp, char *script,
 		    int index, int length);
@@ -88,7 +88,7 @@ static int	ParseCharLength (Tcl_Interp *interp, char *script,
 static int	ParseCountNewline (Tcl_Interp *interp,
 		    char *script, Tcl_Size scriptLength, Tcl_Obj *rangePtr1,
 		    Tcl_Obj *rangePtr2);
-static int	ParseGetIndexAndLength (Tcl_Interp *interp, 
+static int	ParseGetIndexAndLength (Tcl_Interp *interp,
 		    Tcl_Obj *rangePtr, Tcl_Size scriptLen, Tcl_Size *index,
 		    Tcl_Size *length);
 
@@ -109,8 +109,7 @@ static int	ParseGetIndexAndLength (Tcl_Interp *interp,
  */
 
 int
-Tclparser_Init(interp)
-    Tcl_Interp *interp;
+Tclparser_Init(Tcl_Interp *interp)
 {
     if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {
 	return TCL_ERROR;
@@ -136,11 +135,11 @@ Tclparser_Init(interp)
  */
 
 static int
-ParseObjCmd(dummy, interp, objc, objv)
-    ClientData dummy;		/* Not used. */
-    Tcl_Interp *interp;		/* Current interpreter. */
-    int objc;			/* Number of arguments. */
-    Tcl_Obj *CONST objv[];	/* Argument objects. */
+ParseObjCmd(
+    ClientData dummy,		/* Not used. */
+    Tcl_Interp *interp,		/* Current interpreter. */
+    int objc,			/* Number of arguments. */
+    Tcl_Obj *const objv[])	/* Argument objects. */
 {
     int option;
     Tcl_Size index, length, scriptLength;
@@ -282,17 +281,17 @@ ParseObjCmd(dummy, interp, objc, objv)
  */
 
 static int 
-ParseCommand(interp, script, index, length)
-    Tcl_Interp *interp;		/* Current interpreter. */
-    char *script;		/* Script to parse. */
-    int index;			/* Index to the starting point of the 
+ParseCommand(
+    Tcl_Interp *interp,		/* Current interpreter. */
+    char *script,		/* Script to parse. */
+    int index,			/* Index to the starting point of the 
 				 * script. */
-    int length;			/* Byte length of script be parsed. */
+    int length)			/* Byte length of script be parsed. */
 {
     Tcl_Obj *resultPtr, *listPtr, *tokenPtr;
     Tcl_Parse parse;
     int  i;
-    CONST char *start, *end;
+    const char *start, *end;
 
     start = script + index;
 
@@ -344,18 +343,18 @@ ParseCommand(interp, script, index, length)
  */
 
 static int
-ParseExpr(interp, script, index, length)
-    Tcl_Interp *interp;		/* Current interpreter. */
-    char *script;		/* Script to parse. */
-    int index;			/* Index to the starting point of the 
+ParseExpr(
+    Tcl_Interp *interp,		/* Current interpreter. */
+    char *script,		/* Script to parse. */
+    int index,			/* Index to the starting point of the
 				 * script. */
-    int length;			/* Byte length of script be parsed. */
+    int length)			/* Byte length of script be parsed. */
 {
     Tcl_Obj *resultPtr;
     Tcl_Parse parse;
 
     resultPtr = Tcl_GetObjResult(interp);
-    
+
     if (Tcl_ParseExpr(interp, script + index, length, &parse)
 	    != TCL_OK) {
 	ParseSetErrorCode(interp, script, &parse);
@@ -389,17 +388,17 @@ ParseExpr(interp, script, index, length)
  */
 
 static int
-ParseList(interp, script, index, length)
-    Tcl_Interp *interp;		/* Current interpreter. */
-    char *script;		/* Script to parse. */
-    int index;			/* Index to the starting point of the 
+ParseList(
+    Tcl_Interp *interp,		/* Current interpreter. */
+    char *script,		/* Script to parse. */
+    int index,			/* Index to the starting point of the 
 				 * script. */
-    int length;			/* Byte length of script be parsed. */
+    int length)			/* Byte length of script be parsed. */
 {
     Tcl_Obj *resultPtr;
     Tcl_Size size;
     char c;
-    CONST char *list, *element, *prevList, *last;
+    const char *list, *element, *prevList, *last;
 
     resultPtr = Tcl_NewListObj(0, NULL);
     list = script + index;
@@ -463,12 +462,12 @@ ParseList(interp, script, index, length)
  */
 
 static int
-ParseVarName(interp, script, index, length)
-    Tcl_Interp *interp;		/* Current interpreter. */
-    char *script;		/* Script to parse. */
-    int index;			/* Index to the starting point of the 
+ParseVarName(
+    Tcl_Interp *interp,		/* Current interpreter. */
+    char *script,		/* Script to parse. */
+    int index,			/* Index to the starting point of the 
 				 * script. */
-    int length;			/* Byte length of script be parsed. */
+    int length)			/* Byte length of script be parsed. */
 {
     Tcl_Obj *resultPtr;
     Tcl_Parse parse;
@@ -508,10 +507,10 @@ ParseVarName(interp, script, index, length)
  */
 
 static void
-ParseSetErrorCode(interp, script, parsePtr)
-    Tcl_Interp *interp;		/* Current interpreter. */
-    char *script;		/* Script to parse. */
-    Tcl_Parse *parsePtr;	/* Parse state. */
+ParseSetErrorCode(
+    Tcl_Interp *interp,		/* Current interpreter. */
+    char *script,		/* Script to parse. */
+    Tcl_Parse *parsePtr)	/* Parse state. */
 {
     Tcl_Obj *objv[4];
     char *type;
@@ -580,11 +579,11 @@ ParseSetErrorCode(interp, script, parsePtr)
  */
 
 static int
-ParseMakeTokenList(script, parsePtr, index, resultPtrPtr)
-    char *script;		/* Pointer to start of script being parsed. */
-    Tcl_Parse *parsePtr;	/* Parse information. */
-    int index;			/* Index of token to append. */
-    Tcl_Obj **resultPtrPtr;	/* Pointer to location where resulting list
+ParseMakeTokenList(
+    char *script,		/* Pointer to start of script being parsed. */
+    Tcl_Parse *parsePtr,	/* Parse information. */
+    int index,			/* Index of token to append. */
+    Tcl_Obj **resultPtrPtr)	/* Pointer to location where resulting list
 				 * object is to be stored. */
 {
     Tcl_Token *tokenPtr = parsePtr->tokenPtr + index;
@@ -655,10 +654,10 @@ ParseMakeTokenList(script, parsePtr, index, resultPtrPtr)
  */
 
 static Tcl_Obj *
-ParseMakeRange(script, start, length)
-    char *script;		/* Pointer to the first byte of the script. */
-    CONST char *start;		/* Pointer to the start of the range. */
-    int length;			/* The length of the range. */
+ParseMakeRange(
+    char *script,		/* Pointer to the first byte of the script. */
+    const char *start,		/* Pointer to the start of the range. */
+    int length)			/* The length of the range. */
 {
     Tcl_Obj *objv[2];
 
@@ -684,18 +683,18 @@ ParseMakeRange(script, start, length)
  *----------------------------------------------------------------------
  */
 
-static int 
-ParseGetString(interp, script, index, length)
-    Tcl_Interp *interp;	    /* Current interpreter. */
-    char *script;	    /* Script to parse. */
-    int index;		    /* Index to the starting point of the 
+static int
+ParseGetString(
+    Tcl_Interp *interp,	    /* Current interpreter. */
+    char *script,	    /* Script to parse. */
+    int index,		    /* Index to the starting point of the
 			     * script. */
-    int length;	    /* Byte length of script be parsed. */ 
+    int length)	    /* Byte length of script be parsed. */
 {
     Tcl_Obj *resultPtr;
 
     resultPtr = Tcl_GetObjResult(interp);
-    Tcl_SetStringObj(resultPtr, script + index, length);	 
+    Tcl_SetStringObj(resultPtr, script + index, length);
     return TCL_OK;
 }
 
@@ -717,12 +716,12 @@ ParseGetString(interp, script, index, length)
  */
 
 static int 
-ParseCharIndex(interp, script, index, length)
-    Tcl_Interp *interp;	    /* Current interpreter. */
-    char *script;	    /* Script to parse. */
-    int index;		    /* Index to the starting point of the 
+ParseCharIndex(
+    Tcl_Interp *interp,	    /* Current interpreter. */
+    char *script,	    /* Script to parse. */
+    int index,		    /* Index to the starting point of the 
 			     * script. */
-    int length;	    /* Byte length of script be parsed. */ 
+    int length)	    /* Byte length of script be parsed. */ 
 {
     Tcl_Obj *resultPtr;
 
@@ -748,13 +747,13 @@ ParseCharIndex(interp, script, index, length)
  *----------------------------------------------------------------------
  */
 
-static int 
-ParseCharLength(interp, script, index, length)
-    Tcl_Interp *interp;	    /* Current interpreter. */
-    char *script;	    /* Script to parse. */
-    int index;		    /* Index to the starting point of the 
+static int
+ParseCharLength(
+    Tcl_Interp *interp,	    /* Current interpreter. */
+    char *script,	    /* Script to parse. */
+    int index,		    /* Index to the starting point of the 
 			     * script. */
-    int length;	    /* Byte length of script be parsed. */ 
+    int length)	    /* Byte length of script be parsed. */ 
 {
     Tcl_Obj *resultPtr;
 
@@ -791,13 +790,13 @@ ParseCharLength(interp, script, index, length)
  *----------------------------------------------------------------------
  */
 
-static int 
-ParseCountNewline(interp, script, scriptLength, rangePtr1, rangePtr2)
-    Tcl_Interp *interp;	    /* Current interpreter. */
-    char *script;	    /* Script to parse. */
-    int scriptLength;
-    Tcl_Obj *rangePtr1;	    /* Begin counting newlines with this range. */
-    Tcl_Obj *rangePtr2;	    /* Possibly NULL, otherwise used to terminate
+static int
+ParseCountNewline(
+    Tcl_Interp *interp,	    /* Current interpreter. */
+    char *script,	    /* Script to parse. */
+    Tcl_Size scriptLength,
+    Tcl_Obj *rangePtr1,	    /* Begin counting newlines with this range. */
+    Tcl_Obj *rangePtr2)	    /* Possibly NULL, otherwise used to terminate
 			     * newline counting */
 {
     Tcl_Obj *resultPtr;
@@ -903,15 +902,15 @@ ParseCountNewline(interp, script, scriptLength, rangePtr1, rangePtr2)
  */
 
 static int 
-ParseGetIndexAndLength(interp, rangePtr, scriptLen, indexPtr, lengthPtr)
-    Tcl_Interp *interp;	    /* Current interpreter. */
-    Tcl_Obj    *rangePtr;
-    Tcl_Size scriptLen;	    /* Length of script.  If >= 0, then try 
+ParseGetIndexAndLength(
+    Tcl_Interp *interp,	    /* Current interpreter. */
+    Tcl_Obj    *rangePtr,
+    Tcl_Size scriptLen,	    /* Length of script.  If >= 0, then try 
 			     * to normalize index and length based
 			     * on the length of the script. */
-    Tcl_Size *indexPtr;	    /* Index to the starting point of the 
+    Tcl_Size *indexPtr,	    /* Index to the starting point of the 
 			     * script. */
-    Tcl_Size *lengthPtr;    /* Byte length of script be parsed. */ 
+    Tcl_Size *lengthPtr)    /* Byte length of script be parsed. */ 
 {
     Tcl_Obj *itemPtr;
     Tcl_Size listLen;
