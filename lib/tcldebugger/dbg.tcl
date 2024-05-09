@@ -173,8 +173,7 @@ proc dbg::start {application startDir script argList clientData} {
 		    lappend args $arg
 		}
 	    }
-	    exec {*}[auto_execok start] [file nativename $application] {*}$args {*}$argList \
-		    [file nativename $startDir] &
+	    exec {*}[auto_execok start] [file nativename $application] {*}$args {*}$argList &
 	} else {
 	    set args ""
 	    # Ensure that the argument string is a valid Tcl list so we can

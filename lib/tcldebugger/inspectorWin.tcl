@@ -169,7 +169,7 @@ proc inspector::createWindow {} {
     set inspectFrm [frame $mainFrm.inspectFrm]
     set inspectLbl [label $inspectFrm.inspectLbl -anchor w -text "Variable:"]
     set inspectEnt [entry $inspectFrm.inspectEnt \
-	    -textvariable inspector::entVar]
+	    -textvariable ::inspector::entVar]
     set inspectBut [button $inspectFrm.inspectBut -text "Display" -width 8 \
 	    -command inspector::updateVarFromEntry]
     set closeBut [button $inspectFrm.closeBut -text "Close" -width 8 \
@@ -184,10 +184,10 @@ proc inspector::createWindow {} {
     set infoFrm  [frame $dataFrm.infoFrm]
     set nameTitleLbl [label $infoFrm.nameTitleLbl -text "Variable Name:" ]
     set nameLbl [label $infoFrm.nameLbl -justify left \
-	    -textvariable inspector::nameVar]
+	    -textvariable ::inspector::nameVar]
     set levelTitleLbl [label $infoFrm.levelTitleLbl -text "Stack Level:" ]
     set levelLbl [label $infoFrm.levelLbl -justify left \
-	    -textvariable inspector::levelVar]
+	    -textvariable ::inspector::levelVar]
     pack $nameTitleLbl -pady 3 -side left
     pack $nameLbl -padx 3 -pady 3 -side left
     pack $levelTitleLbl -pady 3 -side left
@@ -201,7 +201,7 @@ proc inspector::createWindow {} {
     set choiceFrm [frame $dataFrm.choiceFrm]
     set choiceLbl [label $choiceFrm.choiceLbl -text "View As:" ]
     set choiceBox [guiUtil::ComboBox $choiceFrm.choiceCombo -listheight 4 \
-	    -textvariable inspector::viewVar -strict 1 \
+	    -textvariable ::inspector::viewVar -strict 1 \
 	    -command {inspector::updateWindow 0}]
 
     foreach choice {"Array" "List" "Raw Data" "Line Wrap"} {

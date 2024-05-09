@@ -1067,9 +1067,9 @@ proc DbgNub_GetVar {level maxlen varList} {
 	# is to wrap upvar and track every alias.  This is a lot of work for a
 	# very unusual case, so we are punting for now.
 
-	set traces [trace vinfo local]
+	set traces [trace info variable local]
 	foreach trace $traces {
-	    eval trace vdelete local $trace
+	    eval trace remove variable local $trace
 	}
 	# We use the odd string range call instead of string index
 	# to work on 8.0
@@ -1077,9 +1077,9 @@ proc DbgNub_GetVar {level maxlen varList} {
 	    set avar [lindex [split $var "("] 0]
 	    upvar #$level $avar alocal
 
-	    set atraces [trace vinfo alocal]
+	    set atraces [trace info variable alocal]
 	    foreach trace $atraces {
-		eval trace vdelete alocal $trace
+		eval trace remove variable alocal $trace
 	    }
 	} else {
 	    set atraces {}
@@ -1142,10 +1142,10 @@ proc DbgNub_GetVar {level maxlen varList} {
 	# Restore the traces
 
 	foreach trace $traces {
-	    eval trace variable local $trace
+	    eval trace add variable local $trace
 	}
 	foreach trace $atraces {
-	    eval trace variable alocal $trace
+	    eval trace add variable alocal $trace
 	}
     }
     return $result
@@ -1586,7 +1586,7 @@ proc DbgNub_Proc {location name argList body} {
     ${ns}set DbgNub_catchCode \[DbgNub_UpdateReturnInfo \[
         [list DbgNub_catchCmd $body DbgNub_result DbgNub_options]\]\]
     ${ns}foreach DbgNub_index \[${ns}info locals\] {
-	${ns}if {\[${ns}trace vinfo \$DbgNub_index\] != \"\"} {
+	${ns}if {\[${ns}trace info variable \$DbgNub_index\] != \"\"} {
 	    ${ns}if {[${ns}catch {${ns}upvar 0 DbgNub_dummy \$DbgNub_index}]} {
 		${ns}catch {${ns}unset \$DbgNub_index}
 	    }
@@ -1677,7 +1677,7 @@ proc DbgNub_WrapItclBody {args} {
     ${ns}set DbgNub_catchCode \[DbgNub_UpdateReturnInfo \[
         [list DbgNub_catchCmd $body DbgNub_result DbgNub_options]\]\]
     ${ns}foreach DbgNub_index \[${ns}info locals\] {
-	${ns}if {\[${ns}trace vinfo \$DbgNub_index\] != \"\"} {
+	${ns}if {\[${ns}trace info variable \$DbgNub_index\] != \"\"} {
 	    ${ns}if {[${ns}catch {${ns}upvar 0 DbgNub_dummy \$DbgNub_index}]} {
 		${ns}catch {${ns}unset \$DbgNub_index}
 	    }
@@ -2742,7 +2742,7 @@ proc DbgNub_GetVarTrace {level name} {
     }
 
     upvar #$level $name var
-    foreach trace [trace vinfo var] {
+    foreach trace [trace info variable var] {
 	set command [lindex $trace 1]
 	if {[string compare [lindex $command 0] "DbgNub_TraceVar"] == 0} {
 	    set handle [lindex $command 1]
@@ -2796,7 +2796,7 @@ proc DbgNub_AddVarTrace {level name} {
 
     set DbgNub(var:$handle) {}
     set DbgNub(varRefs:$handle) 1
-    trace variable var wu "DbgNub_TraceVar $handle $type"
+    trace add variable var wu "DbgNub_TraceVar $handle $type"
     return $handle
 }
 
@@ -2969,7 +2969,7 @@ proc DbgNub_TraceVar {handle type name1 name2 op} {
     # Clean up the trace state if the handle is dead.
     
     if {! [DbgNub_infoCmd exists DbgNub(var:$handle)]} {
-	trace vdelete $name wu "DbgNub_TraceVar $handle $type"
+	trace remove variable $name wu "DbgNub_TraceVar $handle $type"
 	return
     }
 

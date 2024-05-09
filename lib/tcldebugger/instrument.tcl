@@ -1539,7 +1539,7 @@ proc instrument::parseMethod {range} {
     parseScript $range
     appendString "\n} DbgNub_result\]\]
     foreach DbgNub_index \[info locals\] {
-	if {\[trace vinfo \$DbgNub_index\] != \"\"} {
+	if {\[trace info variable \$DbgNub_index\] != \"\"} {
 	    if {[catch {upvar 0 DbgNub_dummy \$DbgNub_index}]} {
 		catch {unset \$DbgNub_index}
 	    }

@@ -120,7 +120,7 @@ proc find::createWindow {} {
     set findFrm [frame $mainFrm.findFrm]
     set findLbl [label $findFrm.findLbl -text "Find What "]
     set findBox [guiUtil::ComboBox $findFrm.findBox -ewidth 10\
-	    -textvariable find::findVar -listheight 1]
+	    -textvariable ::find::findVar -listheight 1]
     for {set i [expr {[llength $findList] - 1}]} {$i >= 0} {incr i -1} {
 	$findBox add [lindex $findList $i]
     }
@@ -129,16 +129,16 @@ proc find::createWindow {} {
 
     set checkFrm [frame $mainFrm.checkFrm]
     set wordChk [checkbutton $checkFrm.wordChk \
-	    -variable find::wordVar \
+	    -variable ::find::wordVar \
 	    -text "Match whole word only"]
     set caseChk [checkbutton $checkFrm.caseChk \
-	    -variable find::caseVar \
+	    -variable ::find::caseVar \
 	    -text "Match case" ]
     set regexpChk [checkbutton $checkFrm.regexpChk \
-	    -variable find::regexpVar \
+	    -variable ::find::regexpVar \
 	    -text "Regular expression"]
     set searchChk [checkbutton $checkFrm.searchChk \
-	    -variable find::searchVar \
+	    -variable ::find::searchVar \
 	    -text "Search all open documents"]
     pack $wordChk -padx $pad -anchor w
     pack $caseChk -padx $pad -anchor w
@@ -148,9 +148,9 @@ proc find::createWindow {} {
     set dirFrm [frame $mainFrm.dirFrm -bd $bd -relief groove]
     set dirLbl [label $dirFrm.dirLbl -text "Direction"]
     set upRad  [radiobutton $dirFrm.upRad -text Up \
-	    -variable find::dirVar -value 0]
+	    -variable ::find::dirVar -value 0]
     set downRad [radiobutton $dirFrm.downRad -text Down \
-	    -variable find::dirVar -value 1]
+	    -variable ::find::dirVar -value 1]
     pack $dirLbl -anchor nw -padx $pad -pady $pad
     pack $upRad -anchor w
     pack $downRad -anchor w
@@ -579,9 +579,9 @@ proc goto::createWindow {} {
 
     set choiceLbl [label $mainFrm.choiceLbl -text "Goto what"]
     set lineLbl   [label $mainFrm.lineLbl -text "Enter line number" \
-	    -textvariable goto::lineVar]
+	    -textvariable ::goto::lineVar]
     set choiceBox [guiUtil::ComboBox $mainFrm.choiceBox -listheight 3 \
-	    -textvariable goto::choiceVar -strict 1 -ewidth 15 \
+	    -textvariable ::goto::choiceVar -strict 1 -ewidth 15 \
 	    -command {goto::updateLabels}]
     foreach choice $gotoOptions {
 	$choiceBox add $choice

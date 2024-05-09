@@ -37,7 +37,7 @@ set incrProcPrefix "#DBG INSTRUMENTED PROC TAG
 
 set incrProcSuffix "} DbgNub_result\]\]
     foreach DbgNub_index \[info locals\] {
-	if {\[trace vinfo \$DbgNub_index\] != \"\"} {
+	if {\[trace info variable \$DbgNub_index\] != \"\"} {
 	    if {0} {
 		catch {unset \$DbgNub_index}
 	    }
