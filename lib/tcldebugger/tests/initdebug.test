@@ -189,7 +189,7 @@ test initdebug-3.3 {debugger_attached} {
     waitForApp
     dbg::step any
     waitForApp
-    set dbg::appHost {}
+    set ::dbg::appHost {}
     dbg::quit
     after 500
     set f [open $outputFile r]

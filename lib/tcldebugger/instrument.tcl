@@ -849,7 +849,7 @@ proc instrument::parseScript {{scriptRange {}}} {
 	    if {[getLiteral $cmdToken cmdName]} {
 		incr index
 		set cmdName [string trimleft $cmdName :]
-		if {[info exists instrument::handler($cmdName)]} {
+		if {[info exists ::instrument::handler($cmdName)]} {
 		    set index [eval $::instrument::handler($cmdName) \
 			    {$tree $index}]
 		} else {

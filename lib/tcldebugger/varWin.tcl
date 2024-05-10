@@ -92,7 +92,7 @@ proc var::createWindow {masterFrm} {
 		"Click to expand or flatten the array"}]
     }
     $valuText tag bind handle <Leave> {
-	if {[info exists gui::afterStatus(%W)]} { 
+	if {[info exists ::gui::afterStatus(%W)]} { 
 	    after cancel $::gui::afterStatus(%W)
 	    unset ::gui::afterStatus(%W)
 	    gui::updateStatusMessage -msg {}
