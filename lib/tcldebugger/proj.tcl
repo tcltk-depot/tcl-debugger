@@ -940,7 +940,7 @@ proc proj::applyDefaultProjCmd {destroy} {
 
 proc proj::fileMissingWindow {prefix path types} {
     proj::ShowFileMissingWindow $prefix $path $types
-    vwait proj::fileFound
+    vwait ::proj::fileFound
     return $::proj::fileFound
 }
 

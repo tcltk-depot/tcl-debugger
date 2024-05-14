@@ -672,7 +672,7 @@ proc gui::instrumentErrorHandler {loc} {
     gui::updateStatusMessage -state 1 -msg "parse error"
     gui::showParseErrorWindow $errorMsg
 
-    vwait gui::parseErrorVar
+    vwait ::gui::parseErrorVar
     switch $parseErrorVar {
 	cont {
 	    return 1

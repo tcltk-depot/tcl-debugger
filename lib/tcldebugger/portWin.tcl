@@ -43,7 +43,7 @@ proc portWin::showWindow {port} {
     focus -force $::portWin::portEnt
     grab $::gui::gui(errorPortWin)
 
-    vwait portWin::newPortVar
+    vwait ::portWin::newPortVar
     return $::portWin::newPortVar
 }
 
