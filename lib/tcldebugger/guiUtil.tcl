@@ -223,7 +223,7 @@ proc guiUtil::tableCreate {master frm1 frm2 args} {
     set t(-title2) ""
     set t(-justify) left
     array set t $args
-    if {[info exists guiUtil::paneGeom($master)]} {
+    if {[info exists ::guiUtil::paneGeom($master)]} {
 	set t(-percent) $::guiUtil::paneGeom($master)
     }
 
@@ -392,7 +392,7 @@ proc guiUtil::tableGeometry {master} {
 proc guiUtil::ComboBox {ComboBox args} {
     variable comboCommand
 
-    if {![info exists guiUtil::ComboBoxInitListBoxes]} {
+    if {![info exists ::guiUtil::ComboBoxInitListBoxes]} {
 	# HACK: Listboxes should be the same color as Text
 	# boxes, but they are not.  Set the default Listbox
 	# color to be the same as the Text widget's color.

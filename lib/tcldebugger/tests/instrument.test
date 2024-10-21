@@ -37,7 +37,7 @@ set incrProcPrefix "#DBG INSTRUMENTED PROC TAG
 
 set incrProcSuffix "} DbgNub_result\]\]
     foreach DbgNub_index \[info locals\] {
-	if {\[trace vinfo \$DbgNub_index\] != \"\"} {
+	if {\[trace info variable \$DbgNub_index\] != \"\"} {
 	    if {0} {
 		catch {unset \$DbgNub_index}
 	    }
@@ -53,19 +53,19 @@ set incrProcSuffix "} DbgNub_result\]\]
 
 proc resetExtensions {} {
     foreach name [array names instrument::extensions] {
-	set instrument::extensions($name) 0
+	set ::instrument::extensions($name) 0
     }
 }
 
 test instrument-1.1 {instrument::loadHandlers} {
     resetExtensions
     instrument::initialize 7.6
-    info exists instrument::handler(namespace)
+    info exists ::instrument::handler(namespace)
 } 0
 test instrument-1.2 {instrument::loadHandlers} {
     resetExtensions
     instrument::initialize 8.0
-    info exists instrument::handler(namespace)
+    info exists ::instrument::handler(namespace)
 } 1
 
 test instrument-2.1 {instrument::initialize, incrTcl 3.0} {
@@ -94,25 +94,25 @@ test instrument-2.3 {instrument::initialize, tclx} {
     resetExtensions
     instrument::extension tclx 1
     instrument::initialize 8.0
-    info exists instrument::handler(for_array_keys)
+    info exists ::instrument::handler(for_array_keys)
 } 1
 test instrument-2.4 {instrument::initialize, tclx} {
     resetExtensions
     instrument::extension tclx 0
     instrument::initialize 8.0
-    info exists instrument::handler(for_array_keys)
+    info exists ::instrument::handler(for_array_keys)
 } 0
 test instrument-2.5 {instrument::initialize, expect} {
     resetExtensions
     instrument::extension expect 1
     instrument::initialize 8.0
-    info exists instrument::handler(expect)
+    info exists ::instrument::handler(expect)
 } 1
 test instrument-2.6 {instrument::initialize, expect} {
     resetExtensions
     instrument::extension expect 0
     instrument::initialize 8.0
-    info exists instrument::handler(expect)
+    info exists ::instrument::handler(expect)
 } 0
 
 test instrument-3.1 {instrument::extension} {
@@ -195,13 +195,13 @@ test instrument-7.1 {instrument::Instrument, reentrant usage} {
 	set ::result [list [catch {blk::Instrument $::b {set x 1}} msg] $msg]
 	return 1
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     lappend ::result [blk::Instrument $b {puts $a(}]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 }  "1 {The instrumenter is being called while in use!} {DbgNub_Do 0 {$b 1 {0 8}} {puts \$a(}}"
 test instrument-7.2 {instrument::Instrument, uncaught parsing errors in scripts} {
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     list [catch {blk::Instrument $b {puts $a(}} msg] $msg $errorCode
 }  "0 {} {PARSE missingParen 7 {missing )}}"
 test instrument-7.3 {instrument::Instrument, normal completion} {
@@ -214,9 +214,9 @@ test instrument-7.4 {instrument::Instrument, error in instrumenter} {
 	error "foobar"
     }
     set result {}
-    set instrument::handler(foo) {::err}
+    set ::instrument::handler(foo) {::err}
     lappend result [blk::Instrument $b {foo}]
-    unset instrument::handler(foo)
+    unset ::instrument::handler(foo)
     set result
 } "foobar {}"
 
@@ -240,10 +240,10 @@ test instrument-8.6 {instrument::parseScript, error handling, handler returns 0}
     proc ::err {args} {
 	return 0
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     set result [list [catch {
 	blk::Instrument $b "set x 1 ; set y \$z("} msg] $msg $errorCode]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "0 {} {PARSE missingParen 18 {missing )}}"
 test instrument-8.7 {instrument::parseScript, error handling, handler returns 1} {
@@ -252,9 +252,9 @@ test instrument-8.7 {instrument::parseScript, error handling, handler returns 1}
 	set ::result [list $loc $::errorCode]
 	return 1
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     lappend result [blk::Instrument $b "set x 1 ; set y \$z( ; set z 2"]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "{$b 1 {18 1}} {PARSE missingParen 18 {missing )}} {DbgNub_Do 0 {$b 1 {0 9}} {set x 1}
 DbgNub_Do 0 {$b 1 {9 20}} { set y \$z( ; set z 2}}"
@@ -264,9 +264,9 @@ test instrument-8.8 {instrument::parseScript, error handling, handler returns 1,
 	set ::result [list $loc $::errorCode]
 	return 1
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     lappend result [blk::Instrument $b "set y \$z("]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "{$b 1 {8 1}} {PARSE missingParen 8 {missing )}} {DbgNub_Do 0 {$b 1 {0 9}} {set y \$z(}}"
 test instrument-8.9 {instrument::parseScript, trailing junk} {
@@ -382,28 +382,28 @@ DbgNub_Do 0 {$b 4 {28 4}} foo
 }}"
 
 test instrument-12.1 {instrument::parseOption} {
-    set instrument::handler(foo) {
+    set ::instrument::handler(foo) {
 	parseOption {{a parseBody} {b parseWord}} parseCommand
     }
     set result [blk::Instrument $b foo]
-    unset instrument::handler(foo)
+    unset ::instrument::handler(foo)
     set result
 } "DbgNub_Do 0 {$b 1 {0 3}} foo"
 test instrument-12.2 {instrument::parseOption, nonliteral} {
-    set instrument::handler(foo) {
+    set ::instrument::handler(foo) {
 	parseOption {{a parseBody} {b parseWord}} parseCommand
     }
     set result [blk::Instrument $b {foo $sub; foo $sub([set])}]
-    unset instrument::handler(foo)
+    unset ::instrument::handler(foo)
     set result
 } "DbgNub_Do 0 {$b 1 {0 9}} {foo \$sub}
 DbgNub_Do 0 {$b 1 {10 15}} {foo \$sub(\[DbgNub_Do 1 {$b 1 {20 3}} set\])}"
 test instrument-12.3 {instrument::parseOption} {
-    set instrument::handler(foo) {
+    set ::instrument::handler(foo) {
 	parseOption {{a parseBody} {b parseExpr}} parseCommand
     }
     set result [blk::Instrument $b {foo a bar; foo b {1+[bar]}; foo c bar}]
-    unset instrument::handler(foo)
+    unset ::instrument::handler(foo)
     set result
 } "DbgNub_Do 0 {$b 1 {0 10}} {foo a {
 # DBGNUB START: {$b 1 {0 10}}
@@ -414,7 +414,7 @@ DbgNub_Do 0 {$b 1 {11 16}} {foo b {1+\[DbgNub_Do 1 {$b 1 {21 3}} bar\]}}
 DbgNub_Do 0 {$b 1 {28 9}} {foo c bar}"
 
 test instrument-13.1 {instrument::parseSimpleArgs} {
-    set instrument::handler(foo) {
+    set ::instrument::handler(foo) {
 	parseSimpleArgs 1 2 {parseExpr parseWord}
     }
     set result [blk::Instrument $b {
@@ -423,7 +423,7 @@ test instrument-13.1 {instrument::parseSimpleArgs} {
 	foo {1+[bar]} baz
 	foo {1+[bar]} baz blat
     }]
-    unset instrument::handler(foo)
+    unset ::instrument::handler(foo)
     set result
 } "DbgNub_Do 0 {$b 2 {2 4}} foo
 DbgNub_Do 0 {$b 3 {7 14}} {foo {1+\[DbgNub_Do 1 {$b 3 {15 3}} bar\]}}
@@ -431,7 +431,7 @@ DbgNub_Do 0 {$b 4 {22 18}} {foo {1+\[DbgNub_Do 1 {$b 4 {30 3}} bar\]} baz}
 DbgNub_Do 0 {$b 5 {41 23}} {foo {1+\[bar\]} baz blat}"
 
 test instrument-14.1 {instrument::parseTail} {
-    set instrument::handler(foo) {
+    set ::instrument::handler(foo) {
 	parseTail 2 {parseBody parseExpr}
     }
     set result [blk::Instrument $b {
@@ -440,7 +440,7 @@ test instrument-14.1 {instrument::parseTail} {
 	foo bar {1+[bar]}
 	foo bar {1+[bar]} {1+[bar]}
     }]
-    unset instrument::handler(foo)
+    unset ::instrument::handler(foo)
     set result
 } "DbgNub_Do 0 {$b 2 {2 4}} foo
 DbgNub_Do 0 {$b 3 {7 8}} {foo bar}
@@ -460,7 +460,7 @@ DbgNub_Do 0 {$b 5 {44 7}} {1+\[DbgNub_Do 1 {$b 5 {47 3}} bar\]}
 } {1+\[DbgNub_Do 1 {$b 5 {57 3}} bar\]}}"
 
 test instrument-15.1 {instrument::wrapCommand} {
-    set instrument::handler(foo) {
+    set ::instrument::handler(foo) {
 	wrapCommand blat 2 {parseBody parseExpr}
     }
     set result [blk::Instrument $b {
@@ -469,7 +469,7 @@ test instrument-15.1 {instrument::wrapCommand} {
 	foo bar {1+[bar]}
 	foo bar {1+[bar]} {1+[bar]}
     }]
-    unset instrument::handler(foo)
+    unset ::instrument::handler(foo)
     set result
 } "DbgNub_Do 0 {$b 2 {2 4}} foo
 DbgNub_Do 0 {$b 3 {7 8}} {foo bar}
@@ -505,9 +505,9 @@ test instrument-15.5 {instrument::parseExpr, error handling, handler returns 1} 
 	set ::result [list $loc $::errorCode]
 	return 1
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     lappend result [blk::Instrument $b "while {err} body"]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "{$b 1 {10 1}} {PARSE syntax 10 {invalid bareword \"err\"
 in expression \"err\";
@@ -539,9 +539,9 @@ test instrument-16.3 {instrument::parseIncr22Class, error in class} {
 	set ::result [list $loc $::errorCode]
 	return 1
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     lappend result [blk::Instrument $b {class foo {set y 1; set x $a(}}]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "{$b 1 {28 1}} {PARSE missingParen 28 {missing )}} {DbgNub_Do 0 {$b 1 {0 30}} {class foo {
 # DBGNUB START: {$b 1 {0 30}}
@@ -1281,12 +1281,12 @@ test instrument-26.4 {instrument::parseScript, error handling, handler returns 0
     proc ::err {args} {
 	return 0
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     set result [list [catch {
 	blk::Instrument $b "expect {
 	set x 1 ; set y \$z(
     }"} msg] $msg $errorCode]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "0 {} {PARSE missingParen 28 {missing )}}"
 test instrument-26.5 {instrument::parseScript, error handling, handler returns 1} {
@@ -1298,11 +1298,11 @@ test instrument-26.5 {instrument::parseScript, error handling, handler returns 1
 	set ::result [list $loc $::errorCode]
 	return 1
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     lappend result [blk::Instrument $b "expect {
 	set x 1 ; set y \$z(
     }"]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "{$b 2 {28 1}} {PARSE missingParen 28 {missing )}} {DbgNub_Do 0 {$b 1 {0 35}} {expect {
 	set x 1 ; set y \$z(
@@ -2644,9 +2644,9 @@ test instrument-70.1 {BLACKBOX: parsing errors} {
 	set ::result [list $loc $::errorCode]
 	return 1
     }
-    set instrument::errorHandler ::err
+    set ::instrument::errorHandler ::err
     lappend result [blk::Instrument $b "proc foo {} { set x {}f }"]
-    set instrument::errorHandler {}
+    set ::instrument::errorHandler {}
     set ::result
 } "{$b 1 {22 1}} {PARSE braceExtra 22 {extra characters after close-brace}} {DbgNub_Do 0 {$b 1 {0 25}} {proc foo {} {
 # DBGNUB START: {$b 1 {0 25}}

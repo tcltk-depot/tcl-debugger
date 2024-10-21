@@ -134,7 +134,7 @@ namespace eval sel {
 	break
     }
     bind selectLine <ButtonRelease-1> {
-	if {[info exists sel::selectStart(%W)]} {
+	if {[info exists ::sel::selectStart(%W)]} {
 	    if {[%W index @0,%y] == [%W index $::sel::selectStart(%W)]} {
 		sel::selectLine %W current
 	    }
@@ -499,7 +499,7 @@ proc sel::selectLineRange {text index} {
 #	None.
 
 proc sel::moveSelection {text amount} {
-    if {[info exists sel::selectCursor($text)]} {
+    if {[info exists ::sel::selectCursor($text)]} {
 	set newLine [expr {$::sel::selectCursor($text) + $amount}]
     } else {
 	set newLine $amount
@@ -532,7 +532,7 @@ proc sel::moveSelection {text amount} {
 #	None.
 
 proc sel::moveSelectionRange {text amount} {
-    if {[info exists sel::selectCursor($text)]} {
+    if {[info exists ::sel::selectCursor($text)]} {
 	set newLine [expr {$::sel::selectCursor($text) + $amount}]
     } else {
 	set newLine $amount
@@ -565,7 +565,7 @@ proc sel::moveSelectionRange {text amount} {
 #	None.
 
 proc sel::moveCursor {text amount} {
-    if {[info exists sel::selectCursor($text)]} {
+    if {[info exists ::sel::selectCursor($text)]} {
 	set newCursor [expr {$::sel::selectCursor($text) + $amount}]
     } else {
 	set newCursor $amount
@@ -604,7 +604,7 @@ proc sel::moveCursorToIndex {text index} {
 #	None.
 
 proc sel::selectCursorRange {text} {
-    if {[info exists sel::selectCursor($text)]} {
+    if {[info exists ::sel::selectCursor($text)]} {
 	set newLine $::sel::selectCursor($text)
     } else {
 	set newLine 0
@@ -625,7 +625,7 @@ proc sel::selectCursorRange {text} {
 #	None.
 
 proc sel::selectCursor {text} {
-    if {[info exists sel::selectCursor($text)]} {
+    if {[info exists ::sel::selectCursor($text)]} {
 	set newLine $::sel::selectCursor($text)
     } else {
 	set newLine 1
@@ -650,7 +650,7 @@ proc sel::selectCursor {text} {
 #	None.
 
 proc sel::toggleCursor {text} {
-    if {[info exists sel::selectCursor($text)]} {
+    if {[info exists ::sel::selectCursor($text)]} {
 	set newLine $::sel::selectCursor($text)
     } else {
 	set newLine 0
@@ -670,7 +670,7 @@ proc sel::toggleCursor {text} {
 #	None.
 
 proc sel::updateCursor {text} {
-    if {![info exists sel::selectCursor($text)]} {
+    if {![info exists ::sel::selectCursor($text)]} {
 	set ::sel::selectCursor($text) 1
     }
     set start "$::sel::selectCursor($text).0"
@@ -797,7 +797,7 @@ proc sel::preserve {text} {
 proc sel::restore {text} {
     variable selectPreserve
     
-    if {[info exists selectPreserve($text)]} {
+    if {[info exists ::selectPreserve($text)]} {
 	foreach line [lindex $selectPreserve($text) 2] {
 	    sel::selectMultiLine $text $line.0
 	}
@@ -861,7 +861,7 @@ proc sel::isSelected {text line} {
 #	create on and set it to line# 1.
 
 proc sel::getCursor {text} {
-    if {![info exists sel::selectCursor($text)]} {
+    if {![info exists ::sel::selectCursor($text)]} {
 	set ::sel::selectCursor($text) 1
     }
 	
@@ -900,7 +900,7 @@ proc sel::setCursor {text line} {
 #	create on and set it to line #1.
 
 proc sel::getAnchor {text} {
-    if {![info exists sel::selectAnchor($text)]} {
+    if {![info exists ::sel::selectAnchor($text)]} {
 	set ::sel::selectAnchor($text) 1
     }
     return $::sel::selectAnchor($text)

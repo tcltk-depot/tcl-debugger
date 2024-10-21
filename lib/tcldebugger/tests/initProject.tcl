@@ -190,7 +190,7 @@ proc initProjectFiles {dummy} {
     set localProj   [file join $projDir Local.tpj]
     set remoteProj  [file join $projDir Remote.tpj]
 
-    set proj::projectOpen 1
+    set ::proj::projectOpen 1
  
     set file [open $::corruptProj w]
     puts $file "set"
@@ -233,7 +233,7 @@ proc initProjectFiles {dummy} {
     proj::saveProj $remoteProj
     pref::groupDelete Project
  
-    set proj::projectOpen 0
+    set ::proj::projectOpen 0
     pref::prefSet GlobalDefault projectList {}
     return
 }
@@ -249,8 +249,8 @@ proc initProjectFiles {dummy} {
 #	None.
 
 proc cleanProject {} {
-    set proj::projectOpen 0
-    set proj::projectNeverSaved 0
+    set ::proj::projectOpen 0
+    set ::proj::projectNeverSaved 0
 
     if {[pref::groupExists Temp]} {
 	pref::groupDelete Temp

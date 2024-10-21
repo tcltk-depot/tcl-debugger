@@ -81,7 +81,7 @@ proc evalWin::createWindow {} {
     set levelFrm [frame $mainFrm.levelFrm]
     set levelLbl [label $levelFrm.levelLbl -text "Stack Level:"]
     set levelCombo [guiUtil::ComboBox $levelFrm.levelCombo -ewidth 8 \
-	    -textvariable gui::gui(evalLevelVar) -strict 1 \
+	    -textvariable ::gui::gui(evalLevelVar) -strict 1 \
 	    -listheight 1 -listwidth 8 -listexportselection 0]
     set closeBut [button $levelFrm.closeBut -text "Close" -width 10 \
 	    -command {destroy $::gui::gui(evalDbgWin)}]

@@ -59,7 +59,7 @@ namespace eval bind {
     }
     bind watchBind <ButtonRelease-1> {
 	watch::tkCancelRepeat %W
-	if {[info exists watch::text(valu,%W)] \
+	if {[info exists ::watch::text(valu,%W)] \
 		&& ([$::watch::text(valu,%W) index @0,%y] == \
 		$::sel::selectStart($::watch::text(valu,%W)))} {
 	    watch::selectLine %W @0,%y

@@ -221,13 +221,13 @@ proc coverage::createWindow {} {
 
     set mainFrm [frame $top.mainFrm -bd $bd -relief raised]
 
-    set radio(cvr)  [radiobutton $mainFrm.radioCvr -variable coverage::radio(val) \
+    set radio(cvr)  [radiobutton $mainFrm.radioCvr -variable ::coverage::radio(val) \
 	    -value 0 -text "Highlight Covered Code for Selected File." \
-	    -command coverage::updateWindow]
+	    -command ::coverage::updateWindow]
     set radio(uncvr)  [radiobutton $mainFrm.radioUncvr \
-	    -variable coverage::radio(val) -value 1 \
+	    -variable ::coverage::radio(val) -value 1 \
 	    -text "Highlight Uncovered Code for Selected File." \
-	    -command coverage::updateWindow]
+	    -command ::coverage::updateWindow]
     set coverText [text $mainFrm.coverText -width 30 -height 5 \
 	    -yscroll [list $mainFrm.coverText.sb set]]
     set sb [scrollbar $coverText.sb -command [list $coverText yview]]

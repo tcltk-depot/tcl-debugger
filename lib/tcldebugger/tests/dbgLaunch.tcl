@@ -83,7 +83,7 @@ proc proj::InitNewProj {} {
 proc initDbg {} {
     wm geometry . +0+0
 
-    set blk::blockCounter 0
+    set ::blk::blockCounter 0
     dbg::initialize
     
     dbg::register linebreak {eventProc linebreak}

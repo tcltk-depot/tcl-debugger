@@ -406,7 +406,7 @@ proc gui::showCode {loc} {
 #	None.
 
 proc gui::resultHandler {id code result errCode errInfo} {
-    if {[info exists gui::afterID]} {
+    if {[info exists ::gui::afterID]} {
 	after cancel $::gui::afterID
     }
     evalWin::evalResult $id $code $result $errCode $errInfo
@@ -517,10 +517,10 @@ proc gui::userbreakHandler {args} {
 #	None.
 
 proc gui::stoppedHandler {breakType} {
-    if {[info exists gui::afterID]} {
+    if {[info exists ::gui::afterID]} {
 	after cancel $::gui::afterID
     }
-    if {[info exists gui::msgAfterID]} {
+    if {[info exists ::gui::msgAfterID]} {
 	after cancel $::gui::msgAfterID
     }
     file::update
@@ -547,10 +547,10 @@ proc gui::stoppedHandler {breakType} {
 #	None.
 
 proc gui::exitHandler {} {
-    if {[info exists gui::afterID]} {
+    if {[info exists ::gui::afterID]} {
 	after cancel $::gui::afterID
     }
-    if {[info exists gui::msgAfterID]} {
+    if {[info exists ::gui::msgAfterID]} {
 	after cancel $::gui::msgAfterID
     }
 
@@ -617,7 +617,7 @@ proc gui::instrumentHandler {status block} {
     # This is to prevent flicker or clobbering of more
     # current messages.
 
-    if {[info exists gui::msgAfterID]} {
+    if {[info exists ::gui::msgAfterID]} {
 	after cancel $::gui::msgAfterID
     }
 
@@ -661,7 +661,7 @@ proc gui::instrumentErrorHandler {loc} {
     variable parseErrorVar
 
     set errorMsg [lindex $::errorCode end]
-    if {[info exists gui::afterID]} {
+    if {[info exists ::gui::afterID]} {
 	after cancel $::gui::afterID
     }
     gui::resetWindow
@@ -895,7 +895,7 @@ proc gui::runTo {} {
 #	returns 1 if the user canceled this action.
 
 proc gui::kill {} {
-    if {[info exists gui::afterID]} {
+    if {[info exists ::gui::afterID]} {
 	after cancel $::gui::afterID
     }
     set state [getCurrentState]
@@ -2083,7 +2083,7 @@ proc gui::registerStatusMessage {win msg {delay 1000}} {
 	\}
     "
     bind $win <Leave> "
-	if \{\[info exists gui::afterStatus(%W)\]\} \{
+	if \{\[info exists ::gui::afterStatus(%W)\]\} \{
 	    after cancel \$::gui::afterStatus(%W)
 	    unset ::gui::afterStatus(%W)
 	    gui::updateStatusMessage -msg {}

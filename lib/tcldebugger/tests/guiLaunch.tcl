@@ -161,7 +161,7 @@ proc quitGui {} {
     catch {dbg::quit}
     catch {eval destroy [winfo children .]}
     file::update 1
-    catch {unset gui::format}
+    catch {unset ::gui::format}
     gui::setCurrentState new
 
     after 100
