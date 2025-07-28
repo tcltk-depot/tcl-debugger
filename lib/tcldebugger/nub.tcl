@@ -2646,6 +2646,9 @@ proc DbgNub_renameWrapper {args} {
 	# debugger.
 
 	if {![DbgNub_okToRename $name $level]} {
+            puts "cannot rename \"[lindex $args 0]\" in the debugger, your application is likely broken!"
+            # this won't stop if we are inside catch or chosen to not stop on errors, so we break
+            DbgNub_Break $level error "Who on earth reads this message?" "Debugger limitation: cannot rename \"[lindex $args 0]\" in the debugger" 1 1
 	    return -code 1 \
 		    "cannot rename \"[lindex $args 0]\" in the debugger"
 	}
