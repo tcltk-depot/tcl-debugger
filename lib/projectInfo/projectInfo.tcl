@@ -73,8 +73,8 @@ on usage and redistribution of this file.
     # This array holds the names of the executable files in each bin dir.
 
     array set executable {
-	tclsh protclsh83
-	wish prowish83
+	tclsh tclsh
+	wish wish
 	tcldebugger prodebug
     }
 

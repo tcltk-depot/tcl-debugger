@@ -30,12 +30,7 @@ namespace eval ::protest {
     #namespace import ::tcltest::*
 
     # Export the public protest procs
-    set procList [list findExeFile findSoFile setupValidLicense \
-	    saveOriginalLicense restoreOriginalLicense testAllFiles \
-	    resetTestsDirectory]
-    foreach proc $procList {
-	namespace export $proc
-    }
+    namespace export findExeFile findSoFile testAllFiles resetTestsDirectory
 
     # TclPro is limited to a smaller platform set.  Set the
     # ::tcltest::platform variable to the platform you are currently using.
@@ -90,12 +85,6 @@ namespace eval ::protest {
     # buildType defaults to Debug
     variable buildType Debug
 
-    # Default for license is an empty string; save original key and server
-    # information 
-    variable license ""
-    variable savedLicenseKey {}
-    variable savedLicenseServer {}
-
     # Set the current Tcl, extension, and tools versions
     variable currentVersion
     array set ::protest::currentVersion [list \
@@ -147,7 +136,7 @@ proc ::tcltest::initConfigHook {} {
 #       command line processing routine.
 
 proc ::tcltest::processCmdLineArgsAddFlagsHook {} {
-    return [list -install -ws -exedir -build -srcsdir -license -asidefromdir \
+    return [list -install -ws -exedir -build -srcsdir -asidefromdir \
 	    -relateddir -toolsdir]
 }
 
@@ -155,8 +144,7 @@ proc ::tcltest::processCmdLineArgsAddFlagsHook {} {
 #
 #	Use the command line arguments provided by the
 #       processCmdLineArgsAddFlagsHook to set the installationDirectory,
-#       workspaceDirectory, executableDirectory, sourceDirectory,
-#       buildType, and license variables.
+#       workspaceDirectory, executableDirectory, sourceDirectory, and buildType.
 #
 # Arguments:
 #	flagArray        flags provided to ::tcltest::processCmdLineArgs
@@ -285,12 +273,6 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 		$::protest::executableDirectory] 
     }
 
-    # Store the arg of -license, if specified, in ::protest::license.
-
-    if {[info exists flag(-license)]} {
-	set ::protest::license $flag(-license)
-    } 
-
     # Set the ::protest::toolsDirectory to 
     #   //pop/tools/<currentVersion(Tools)>/<::protest::platform>/<bin>  
     # or
@@ -391,95 +373,7 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 }
 
 proc ::tcltest::cleanupTestsHook {} {    
-    # If running the TclPro tests, replace the current license with a permanent
-    # personal-key that is valid for the current release of TclPro
-    ::protest::setupValidLicense
     return
-}
-
-# ::protest::setupValidLicense --
-#
-#    If -license was specified, then add a named-user license for the current
-#    user. 
-#
-# results:
-#
-#    A valid license exists for the current product/version
-
-proc ::protest::setupValidLicense {} {
-    global auto_path 
-
-    if {$::protest::license == ""} {
-	return
-    }
-
-    if {[catch {	
-	# get a permanent key for the current version
-	set newKey [licgen::genkey 1 $::projectInfo::productID \
-		$::projectInfo::baseVersion 0]
-	lic::savePersonalKey $newKey
-	
-	if {$::tcltest::debug > 2} {
-	    puts "::projectInfo::productID = $::projectInfo::productID"
-	    puts "adding new key = $newKey"
-	}
-    }]} {
-	global errorInfo
-	puts $::tcltest::outputChannel \
-		"Error in setupValidLicense command:\n$errorInfo"
-    }
-}
-
-# ::protest::restoreOriginalLicense --
-#
-#	Puts the licenses specifed in ::protest::savedLicenseKey and
-#       ::protest::savedLicenseSever into the user's home.
-#
-# Results:
-#	Modifies the license information for the user running the tests.
-
-proc ::protest::restoreOriginalLicense {} {
-    # Only reset the license key if we've previously saved a license key and
-    # it's different from the one that is currently being used.
-    if {($::protest::savedLicenseKey != {}) && \
-	    (![catch {::protest::lic::GetKey} x])} {
-	if {$x != $::protest::savedLicenseKey} {
-	    lic::savePersonalKey $::protest::savedLicenseKey
-	}
-    }
-    # Only reset the license server if we've previously saved a license server
-    # and it's different from the one that's currently being used.
-    if {($::protest::savedLicenseServer != {{} {}}) && \
-	    ([set x [::protest::lic::getServerInfo]] != {})} {
-	if {$x != $::protest::savedServerKey} {
-	    lic::saveServerInfo [lindex $::protest::savedServerKey 0] \
-		    [lindex $::protest::savedServerKey 1]
-	}
-    }
-    return
-}
-
-# ::protest::saveOriginalLicense --
-#
-#	Save the original license information that was stored for the user.
-#
-# Results:
-#	Saves license information in ::protest::savedLicenseKey
-#       (personal key) and ::protest::savedLicenseServer.
-
-proc ::protest::saveOriginalLicense {} {
-	# Save the currently installed key, and host/port if any exist
-	if {[catch {::protest::lic::GetKey} x]} {
-	    set ::protest::savedLicenseKey {}
-	} else {
-	    set ::protest::savedLicenseKey $x
-	} 
-	if {[set x [::protest::lic::getServerInfo]] == {}} {
-	    set ::protest::savedLicenseServer {{} {}}
-	} else {
-	    set ::protest::savedLicenseServer $x
-	}
-	return
 }
 
 # ::protest::testAllFiles --

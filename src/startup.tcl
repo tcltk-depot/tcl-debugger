@@ -142,11 +142,6 @@ if {[catch {
     # This package require loads the debugger and system modules
     package require debugger
 
-    # Set TclPro license hook
-#	package require licenseWin
-#	licenseWin::verifyLicense
-#	set ::projectInfo::licenseReleaseProc lclient::release
-
     debugger::init $argv $parameters
 } err]} {
     set f [toplevel .init_error]
