@@ -67,17 +67,9 @@ on usage and redistribution of this file.
         variable directoryName ${major}.${minor}${type}${patch}
     }
 
-    # The current version of Acrobat Reader that we are shipping.
-
-    variable acrobatVersion "3.02"
-
-    # This variable holds the version number for the Scriptics License Server
-
-    variable serverVersion $patchLevel
-
-    variable shortTclVers "83"
-    variable baseTclVers "8.6"
-    variable patchTclVers "8.3.2"
+    variable baseTclVers [info tclversion]
+    variable shortTclVers [string map {. {}} $baseTclVers]
+    variable patchTclVers [info patchlevel]
 
     # This array holds the names of the executable files in each bin dir.
 
@@ -85,40 +77,6 @@ on usage and redistribution of this file.
 	tclsh protclsh83
 	wish prowish83
 	tcldebugger prodebug
-	tclchecker procheck
-    }
-
-    # This array holds the names of the source directories for each
-    # source package that is installed with tclpro.
-
-    array set srcDirs {
-	tcl    tcl8.3.2
-	tk     tk8.3.2
-	itcl   itcl3.2
-	tclx   tclx8.3
-	expect expect5.32
-    }
-
-    # This array holds the version information for each
-    # source package that is installed with TclPro.
-
-    array set srcVers {
-	tcl    8.3.2
-	tk     8.3.2
-	itcl   3.2.0
-	tclx   8.3.0
-	expect 5.32.2
-    }
-
-    # This array holds the names of the workspace directories for each
-    # source package that is used by tclpro.
-
-    array set localSrcDirs {
-	tcl    tcl8.3.2
-	tk     tk8.3.2
-	itcl   itcl3.2
-	tclx   tclx8.3
-	expect expect5.32
     }
 
     # This variable contains the version string that is printed in the
@@ -162,19 +120,6 @@ on usage and redistribution of this file.
     variable debuggerProjFileExt ".tpj"
     variable authorProjFileExt ".apj"
     variable docHandlerFileExt ".xdh"
-
-    # This is the product ID that is used, along with the versString
-    # to verify the license.  This variable cannot exceed twelve (12)
-    # bits, that is a maximum of 4096.  Increment the number and ensure
-    # that the no product ID is ever reused.
-
-    #variable productID	2024		;# TclPro 1.1
-    #variable productID	2050		;# TclPro 1.2b2
-    #variable productID	2051		;# TclPro 1.2, 1.3b1-b4
-    #variable productID	2052		;# TclPro 1.3
-    #variable productID	3000		;# xmlserver 1.1
-    #variable productID	2053		;# TclPro 1.4
-    variable productID	2054		;# TclPro 1.4.1
 
     # Specify the packages for which the .pcx extension files will be sourced.
     # Package names match the file rootnames of the pcx files in the
@@ -223,15 +168,6 @@ on usage and redistribution of this file.
 		https://www.tcl-lang.org/software/tclpro/doc/TclProUsersGuide14.pdf
     }
 
-    # By defining these variables the startup sequence will check licenses
-    if {0} {
-    variable verifyLicense
-    if {[info exist tk_version]} {
-	set verifyLicense licenseWin::verifyLicense
-    } else {
-	set verifyLicense projectInfo::verifyLicense
-    }
-    }
 }
 
 # projectInfo::getPreviousPrefslocation --
@@ -326,10 +262,6 @@ proc projectInfo::printCopyright {name {extra {}}} {
 	if {$extra != ""} {
 	    puts stdout $extra
 	}
-    }
-    if {[info exist projectInfo::verifyCommand]} {
-	$projectInfo::verifyCommand $name $projectInfo::versString $projectInfo::productID \
-		registeredName
     }
 
     if {$printCopyright && [info exist registeredName]} {

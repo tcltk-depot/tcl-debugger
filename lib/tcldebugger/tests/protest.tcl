@@ -104,39 +104,12 @@ namespace eval ::protest {
 	    Tcl-patch           $::projectInfo::patchTclVers \
 	    Tk                  $::projectInfo::baseTclVers \
 	    Tk-short            $::projectInfo::shortTclVers \
-	    Tk-patch            $::projectInfo::patchTclVers \
-	    Incr                3.1 \
-	    Incr-patch          3.1.0 \
-	    Iwidget-patch       3.0.0 \
-	    Iwidgets-old-patch  2.2.0 \
-	    TclX                8.2 \
-	    TclX-patch          8.2.0 \
-	    Expect              5.31 \
-	    Expect-patch        5.31.0 \
-	    Sybtcl              3.0 \
-	    Sybtcl-patch        3.0b3 \
-	    Oratcl              2.5 \
-	    Oratcl-patch        2.5.0 \
-	    XmlAct              1.0 \
-	    XmlAct-patch        1.0b1 \
-	    XmlGen              1.0 \
-	    XmlGen-patch        1.0b1 \
-	    XmlServer           1.0 \
-	    XmlServer-patch     1.0b1 \
-	    Blend               1.2 \
-	    Blend-patch         1.2.5 \
-	    TclCom              1.0 \
-	    TclCom-patch        1.0b1 \
-	    TclDomPro           1.0 \
-	    TclDomPro-patch     1.0b1 \
-	    Tools               1.3 \
-	    tbcload             1.3 \
-	    dde                 1.1 \
-	    registry            1.0 ]
+	    Tk-patch            $::projectInfo::patchTclVers]
 
     variable tclDirectory ""
     variable tkDirectory ""
     variable toolsDirectory ""
+
 }
 
 # ::tcltest::PrintUsageInfoHook --

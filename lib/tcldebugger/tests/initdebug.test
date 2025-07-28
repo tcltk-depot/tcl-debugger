@@ -34,6 +34,13 @@ file copy -force [file join $::protest::sourceDirectory initdebug.tcl] $::tcltes
 set pwd [pwd]
 cd $::protest::sourceDirectory
 
+proc getRemotePort {} {
+    set so [socket -server xxx 0]
+    set port [lindex [fconfigure $so -sockname] 2]
+    close $so
+    proc getRemotePort {} "return $port"
+    return $port
+}
 proc launchTest {script {bg 0}} {
     global testFile
 
@@ -71,18 +78,18 @@ puts "SAVED"
 } "failed\n"
 test initdebug-1.2 {debugger_init} {
     initDbg
-    initRemoteProject REMOTE 5321
-    launchTest {
+    initRemoteProject REMOTE [getRemotePort]
+    launchTest [string map [list REMOTEPORT [getRemotePort]] {
 	set f [open output w]
 	source initdebug.tcl
-	if {[debugger_init 127.0.0.1 5321]} {
+	if {[debugger_init 127.0.0.1 REMOTEPORT]} {
 	    puts $f succeed
 	} else {
 	    puts $f failed
 	}
 	close $f
 	exit
-    } 1
+    }] 1
     set result [waitForApp]	;# Attach
     dbg::step run	
     lappend result [waitForApp]	;# Exit
@@ -143,12 +150,12 @@ test initdebug-3.1 {debugger_attached} {
 } "0\n"
 test initdebug-3.2 {debugger_attached} {
     initDbg
-    initRemoteProject REMOTE 5321
-    launchTest {
+    initRemoteProject REMOTE [getRemotePort]
+    launchTest [string map [list REMOTEPORT [getRemotePort]] {
 	set f [open output w]
 	fconfigure $f -buffering none
 	source initdebug.tcl
-	if {[debugger_init 127.0.0.1 5321]} {
+	if {[debugger_init 127.0.0.1 REMOTEPORT]} {
 	    puts $f succeed
 	} else {
 	    puts $f failed
@@ -156,7 +163,7 @@ test initdebug-3.2 {debugger_attached} {
 	puts $f [debugger_attached]
 	close $f
 	exit
-    } 1
+    }] 1
 	
     waitForApp
     dbg::step run
@@ -169,12 +176,12 @@ test initdebug-3.2 {debugger_attached} {
 } "succeed\n1\n"
 test initdebug-3.3 {debugger_attached} {
     initDbg
-    initRemoteProject REMOTE 5321
-    launchTest {
+    initRemoteProject REMOTE [getRemotePort]
+    launchTest [string map [list REMOTEPORT [getRemotePort]] {
 	set f [open output w]
 	fconfigure $f -buffering none
 	source initdebug.tcl
-	if {[debugger_init 127.0.0.1 5321]} {
+	if {[debugger_init 127.0.0.1 REMOTEPORT]} {
 	    puts $f succeed
 	} else {
 	    puts $f failed
@@ -184,7 +191,7 @@ test initdebug-3.3 {debugger_attached} {
 	puts $f [debugger_attached]
 	close $f
 	exit
-    } 1
+    }] 1
     
     waitForApp
     dbg::step any
@@ -200,11 +207,11 @@ test initdebug-3.3 {debugger_attached} {
 
 test initdebug-4.1 {sentinel, multiple sourcing of initdebug.tcl} {
     initDbg
-    initRemoteProject REMOTE 5321
-    launchTest {
+    initRemoteProject REMOTE [getRemotePort]
+    launchTest [string map [list REMOTEPORT [getRemotePort]] {
 	set f [open output w]
 	source initdebug.tcl
-	if {[debugger_init 127.0.0.1 5321]} {
+	if {[debugger_init 127.0.0.1 REMOTEPORT]} {
 	    puts $f succeed
 	    puts $f [debugger_attached]
 	    source initdebug.tcl
@@ -214,7 +221,7 @@ test initdebug-4.1 {sentinel, multiple sourcing of initdebug.tcl} {
 	}
 	close $f
 	exit
-    } 1
+    }] 1
     set result [waitForApp]	;# Attach
     dbg::step run	
     lappend result [waitForApp]	;# Exit
