@@ -17,7 +17,7 @@ namespace eval projectInfo {
 
     variable companyName "Tcl Community"
     variable corporateName "Tcl Community"
-    variable companyUrl  "http://www.tcl.tk"
+    variable companyUrl  "https://github.com/tcltk-depot/TclProDebug"
     variable productName "TclPro"
     variable usersGuide "$productName User's Guide"
 
@@ -48,7 +48,7 @@ on usage and redistribution of this file.
     variable minor 0
     variable type .		;# One of "a", "b", or "."
     variable longType release	;# "alpha", "beta", "release"
-    variable patch 0		;# One of 0, 1, ...
+    variable patch 1		;# One of 0, 1, ...
     variable shortVers 20
 
     variable baseVersion ${major}.${minor}
@@ -213,14 +213,14 @@ on usage and redistribution of this file.
 	}
     }
 
-    set helpFile(tcl) https://www.tcl.tk/man/tcl8.6/
+    set helpFile(tcl) https://www.tcl-lang.org/man/tcl[info tclversion]/
     
     set tmp [file join $docDir html index.html]
     if {[file exists $tmp]} {
 	set helpFile(thisProduct) $tmp
     } else {
 	set helpFile(thisProduct) \
-		http://www.tcl.tk/software/tclpro/doc/TclProUsersGuide14.pdf
+		https://www.tcl-lang.org/software/tclpro/doc/TclProUsersGuide14.pdf
     }
 
     # By defining these variables the startup sequence will check licenses

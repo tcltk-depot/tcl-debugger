@@ -93,7 +93,7 @@ if {0} {
     pack $f2.version -side top -anchor nw
 
     label $f2.url -bd 0 -bg white -padx 10 -pady 0 -highlightthickness 0 \
-	    -text "http://www.tcl.tk" -fg blue \
+    -text "https://github.com/tcltk-depot/TclProDebug" -fg blue \
 	    -cursor hand2
     pack $f2.url -side top -anchor nw
 
@@ -104,7 +104,7 @@ if {0} {
     }
     bind $f2.url <ButtonRelease-1> {
 #	destroy .about
-	system::openURL http://www.tcl.tk/software/tclpro/
+	system::openURL [%W cget -text]
     }
     bind .about <Return> {destroy .about}
 
