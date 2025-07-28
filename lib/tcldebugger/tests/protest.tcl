@@ -106,8 +106,6 @@ namespace eval ::protest {
 	    Tk-short            $::projectInfo::shortTclVers \
 	    Tk-patch            $::projectInfo::patchTclVers]
 
-    variable tclDirectory ""
-    variable tkDirectory ""
     variable toolsDirectory ""
 
 }
@@ -293,41 +291,6 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 	set ::protest::license $flag(-license)
     } 
 
-    # Set the ::tcltest::tclDirectory to
-    # <::protest::workspaceDirectory>/tcl<currentVersion(Tcl)> 
-    # Set the ::tcltest::tkDirectory to
-    # <::protest::workspaceDirectory>/tk<currentVersion(Tk)> 
-
-    if {[file exists [file join $::protest::workspaceDirectory \
-	    "tcl$::protest::currentVersion(Tcl-patch)"]]} {
-	set ::protest::tclDirectory [file join \
-		$::protest::workspaceDirectory \
-		"tcl$::protest::currentVersion(Tcl-patch)"]
-    } elseif {[file exists [file join $::protest::workspaceDirectory \
-	    "tcl$::protest::currentVersion(Tcl)"]]} {
-	set ::protest::tclDirectory [file join \
-		$::protest::workspaceDirectory \
-		"tcl$::protest::currentVersion(Tcl)"]
-    } else {
-	set ::protest::tclDirectory [file join \
-		$::protest::workspaceDirectory "tcl"]
-    }
-    
-    if {[file exists [file join $::protest::workspaceDirectory \
-	    "tk$::protest::currentVersion(Tk-patch)"]]} {
-	set ::protest::tkDirectory [file join \
-		$::protest::workspaceDirectory \
-		"tk$::protest::currentVersion(Tk-patch)"]
-    } elseif {[file exists [file join $::protest::workspaceDirectory \
-	    "tk$::protest::currentVersion(Tk)"]]} {
-	set ::protest::tkDirectory [file join \
-		$::protest::workspaceDirectory \
-		"tk$::protest::currentVersion(Tk)"]
-    } else {
-	set ::protest::tkDirectory [file join \
-		$::protest::workspaceDirectory "tk"]
-    }
-    
     # Set the ::protest::toolsDirectory to 
     #   //pop/tools/<currentVersion(Tools)>/<::protest::platform>/<bin>  
     # or
@@ -393,40 +356,11 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
     regsub tclsh $interp wish interp
     set tool [file tail $::protest::sourceDirectory]
 
-    set exe $::projectInfo::executable($tool)
     set ::protest::interpreterDirectory [file join \
 	    $::tcltest::temporaryDirectory bin]
     if {![file isdir $::protest::interpreterDirectory]} {
 	file mkdir $::protest::interpreterDirectory
     }
- #    set exeFullPath [file join $::protest::interpreterDirectory $exe]
- #    if {[string equal $::tcl_platform(platform) "windows"]} {
-	# # Windows file needs .bat extension
- 	
-	# set tclScript "$exeFullPath.tcl"
- # 	append exeFullPath ".bat"
- #    }
- #    if {[string equal $::tcl_platform(platform) "windows"]} {
-	# set fd [open $exeFullPath w]
-	# puts $fd [list $interp $tclScript "%*"]
-	# set fd2 [open $tclScript w]
-	# close $fd
-	# puts $fd2 "cd $::protest::sourceDirectory"
-	# puts $fd2 "source [file join $::tcltest::testsDirectory startup.tcl]"
-	# close $fd2
- #    } else {
-	# set fd [open $exeFullPath w]
-	# puts $fd "\#!$interp"
-	# puts $fd "cd $::protest::sourceDirectory"
-	# puts $fd "source [file join $::tcltest::testsDirectory startup.tcl]"
-	# close $fd
- #    }
-
- #    if {[string equal $::tcl_platform(platform) "unix"]} {
-	# # Unix files need executable permissions
-	
-	# file attrib $exeFullPath -permissions 0777
- #    }
 
     if {[info exists flag(-srcsdir)]} {
 	set ::protest::executableDirectory $::protest::interpreterDirectory
@@ -437,8 +371,6 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 	puts "::protest::workspaceDirectory = $::protest::workspaceDirectory"
 	puts "::protest::executableDirectory = $::protest::executableDirectory"
 	puts "::protest::sourceDirectory = $::protest::sourceDirectory"
-	puts "::protest::tclDirectory = $::protest::tclDirectory"
-	puts "::protest::tkDirectory = $::protest::tkDirectory"
 	puts "::protest::toolsDirectory = $::protest::toolsDirectory"
 	puts "::tcltest::testsDirectory = $::tcltest::testsDirectory"
 	puts "::tcltest::temporaryDirectory = $::tcltest::temporaryDirectory"
@@ -449,42 +381,6 @@ proc ::tcltest::processCmdLineArgsHook {flagArray} {
 	set ::env(DISPLAY) weasel:0.0
     }
 
-    # The following section of code was lifted from license/lic.test.
-    
-    # Ensure the tables are loaded
-    if {0} {
-	source [file join $::protest::sourceDirectory \
-		util version.tcl]
-	lappend auto_path [file join \
-		$::protest::sourceDirectory license]
-	lappend auto_path [file join \
-		$::protest::sourceDirectory util]
-	
-	if {![catch {package require licdata 2.0} msg]} {
-
-	    # This sets the registry location of the key, if any
-	    licdata::init 1.2
-	    
-	    # Key generation
-	    package require licgen 1.1
-	    auto_load licgen::genkey
-	    
-	    # Key verification
-	    foreach file [list licio.tcl licparse.tcl] {
-		source [file join $::protest::sourceDirectory util $file]
-	    }
-	    
-	    namespace eval lic {
-		namespace export GetKey getServerInfo
-	    }
-	    
-	    # License client
-	    package require lclient 1.0
-	    auto_load lclient::checkout
-	    ::protest::saveOriginalLicense
-	}
-    }
-    
     if {$::tcltest::debug > 1} {
 	puts "::protest::platform = $::protest::platform"
 	if {$::tcl_platform(platform) == "unix"} {
