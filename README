@@ -1,8 +1,7 @@
 This repository contains the Tcl debugger component originally from the TclPro
 product open-sourced by Scriptics Corporation. It has been extracted from the
 [tcltk-depot TclProDebug](https://github.com/tcltk-depot/TclProDebug) repository
-which in turn is a fork of one from
-[flightaware](https://github.com/flightaware/TclProDebug).
+which in turn is a fork of [flightaware](https://github.com/flightaware/TclProDebug).
 
 Changes with respect to the flightware repository include:
 
@@ -14,13 +13,13 @@ Changes with respect to the flightware repository include:
 packages. These need to be installed before running the debugger.
 - Working test suite
 
-To run: execute the file main.tcl
+To run: run the file `main.tcl` with `wish`.
+
+*Note: the starkit functionality for 8.6 probably needs fixing.*
 
 The Help menu item on the Debugger's menu bar has an option to open the TclPro
 user's guide, which will appear as a PDF file in the user's default browser.
 The information in the chapter on the Debugger is still valid.
-
-Note: the starkit functionality for 8.6 probably needs fixing.
 
 Below is the relevant portion of the Flightaware README
 ```
