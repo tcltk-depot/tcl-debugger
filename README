@@ -1,19 +1,31 @@
-The TclPro Debugger version 2.0 is an upgrade of of the debugger included in the
-TclPro product version 1.5 released and open-sourced by Scriptics Corporation.
+This repository contains the Tcl debugger component originally from the TclPro
+product open-sourced by Scriptics Corporation. It has been extracted from the
+[tcltk-depot TclProDebug](https://github.com/tcltk-depot/TclProDebug) repository
+which in turn is a fork of one from
+[flightaware](https://github.com/flightaware/TclProDebug).
 
-To install: You will need to install the extension in lib/tclparser to add the parse command to Tcl.
+Changes with respect to the flightware repository include:
 
-    cd lib/tclparser && autoreconf && ./configure && make install
+- Update for Tcl/Tk 9.0
+- Removal of vestigial TclPro components not required by the debugger
+- Refactoring to remove internal dependencies
+- Use of external [parser](https://github.com/tcltk-depot/tcl-parser) and
+[Tcllib cmdline](https://core.tcl-lang.org/tcllib/doc/trunk/embedded/index.md)
+packages. These need to be installed before running the debugger.
+- Working test suite
 
-To run: execute the file bin/prodebug
+To run: execute the file main.tcl
 
 The Help menu item on the Debugger's menu bar has an option to open the TclPro
 user's guide, which will appear as a PDF file in the user's default browser.
 The information in the chapter on the Debugger is still valid.
 
+Note: the starkit functionality for 8.6 probably needs fixing.
+
+Below is the relevant portion of the Flightaware README
+```
 The debugger code has been upgraded to function with up-to-date releases of 
 Tcl/Tk (i.e., versions 8.5, 8.6):
-
 
 * Tk GUI code upgraded to work with current Tk API.
 
@@ -33,3 +45,4 @@ dict, try) and subcommands.
 * Added script to wrap debugger code into a starkit of minimum size.
 
 * Miscellaneous bug fixes.
+```
