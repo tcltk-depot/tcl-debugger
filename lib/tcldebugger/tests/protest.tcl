@@ -21,8 +21,6 @@ cd [file dirname [info script]]
 set ::tcltest::testsDirectory [pwd]
 cd $oDir
 
-package require projectInfo
-
 # create the "protest" namespace for all testing variables and procedures
 
 namespace eval ::protest {
@@ -87,13 +85,24 @@ namespace eval ::protest {
 
     # Set the current Tcl, extension, and tools versions
     variable currentVersion
-    array set ::protest::currentVersion [list \
-	    Tcl                 $::projectInfo::baseTclVers \
-	    Tcl-short           $::projectInfo::shortTclVers \
-	    Tcl-patch           $::projectInfo::patchTclVers \
-	    Tk                  $::projectInfo::baseTclVers \
-	    Tk-short            $::projectInfo::shortTclVers \
-	    Tk-patch            $::projectInfo::patchTclVers]
+    array set currentVersion \
+        [list \
+             Tcl        $::tcl_version \
+             Tcl-short  [string map {. {}} $::tcl_version] \
+             Tcl-patch  $::tcl_patchLevel]
+    if {[info exists ::tk_version]} {
+        array set currentVersion \
+            [list \
+                 Tk        $::tk_version \
+                 Tk-short  [string map {. {}} $::tk_version] \
+                 Tk-patch  $::tk_patchLevel]
+    } else {
+        array set currentVersion \
+            [list \
+                 Tk        $currentVersion(Tcl) \
+                 Tk-short  $currentVersion(Tcl-short) \
+                 Tk-patch  $currentVersion(Tcl-patch)]
+    }
 
     variable toolsDirectory ""
 
@@ -494,11 +503,7 @@ proc ::protest::testAllFiles {tool interp} {
 proc ::protest::findExeFile {tool {wrapped 0}} {
     global tcl_platform flag
 
-    if {[info exists ::projectInfo::executable($tool)]} {
-	set filePattern $::projectInfo::executable($tool)
-    } else {
-	set filePattern $tool
-    }
+    set filePattern $tool
     if {$tcl_platform(platform) == "windows"} {
 	# Windows files need .exe extensions
 	set fileTail "$filePattern.exe"
