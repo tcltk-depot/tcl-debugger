@@ -122,23 +122,6 @@ source [file join $::debugger::libdir oratcl.pdx]
 source [file join $::debugger::libdir tclCom.pdx]
 source [file join $::debugger::libdir xmlGen.pdx]
 
-# LicenseExit --
-#
-#	Exit the debugger and release shared network license.
-#	This routine must be defined before the following namespace
-#	eval because it may be called in some error cases.
-#
-# Arguments:
-#	None.
-#
-# Side Effects:
-#	Releases shared network license and exits the process.
-
-proc LicenseExit {{status 0}} {
-    catch {$::projectInfo::licenseReleaseProc}
-    exit $status
-}
-
 # debugger::init --
 #
 #	Start the debugger and show the main GUI.
@@ -227,14 +210,9 @@ proc debugger::init {argv newParameters} {
     }
     
     # WARNING. These routines need to be called in this order!
-    # After calling verifyLicenseProc, you should use LicenseExit
-    # to terminate the process and release the license.
 
     TestForSockets
     system::init
-    if {[info exists ::projectInfo::verifyLicenseProc]} {
-        $::projectInfo::verifyLicenseProc
-    }
     
     # Display the splash screen and set a timer to remove it.
 
@@ -325,7 +303,7 @@ proc debugger::init {argv newParameters} {
 	} else {
 	    puts $usageStr
 	}
-	LicenseExit 1
+	exit 1
     }
 
     # Now try to figure out which project to load.
@@ -362,7 +340,7 @@ proc ExitDebugger {} {
     # project file (i.e., window sizes.)
 
     if {![system::saveDefaultPrefs 1]} {
-	LicenseExit
+	exit
     }
     return
 }
@@ -385,7 +363,7 @@ proc CleanExit {} {
     } else {
 	file delete [pref::prefGet fileName]
     }
-    LicenseExit
+    exit
 }
 
 # TestForSockets --
