@@ -10,22 +10,15 @@
 
 # Initialize the debugger library
 
-package require projectInfo
-
 # Specify the additional debugger parameters.
 
 set parameters [list \
 	aboutCmd {::TclProAboutBox images/about.gif images/logo.gif} \
-	aboutCopyright "$::projectInfo::copyright\nVersion $::projectInfo::patchLevel" \
+	aboutCopyright "(c) Various" \
 	appType remote \
 	]
 
-if {$::tcl_platform(platform) == "windows"} {
-    package require Winico
-    lappend parameters iconImage [winico load dbg scicons.dll]
-} else {
-    lappend parameters iconImage images/debugUnixIcon.gif
-}
+lappend parameters iconImage images/debugUnixIcon.gif
 
 # ::TclProAboutBox --
 #

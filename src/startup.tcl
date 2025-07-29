@@ -8,29 +8,6 @@
 # See the file "license.terms" for information on usage and redistribution of this file.
 # 
 
-# Initialize the debugger library
-
-package require projectInfo
-
-# Specify the additional debugger parameters.
-
-set script_dir [file dirname [file norm [info script]]]
-set about_gif $script_dir/images/about.gif
-set logo_gif $script_dir/images/logo.gif
-
-set parameters [list \
-	aboutCmd [list ::TclProAboutBox $about_gif $logo_gif] \
-	aboutCopyright "$::projectInfo::copyright\nVersion $::projectInfo::patchLevel" \
-	appType local \
-]
-
-if {0 && $::tcl_platform(platform) == "windows"} {
-    package require Winico
-    lappend parameters iconImage [winico load dbg scicons.dll]
-} else {
-    lappend parameters iconImage $script_dir/images/debugUnixIcon.gif
-}
-
 # ::TclProAboutBox --
 #
 #	This procedure displays the TclPro about box or
@@ -81,13 +58,6 @@ proc ::TclProAboutBox {aboutImage logoImage} {
 	    -image logo
     pack $f2.logo -side left -anchor nw -padx 0 -pady 0
 
-if {0} {
-    # No room for this
-    set okBut [button $f2.ok -text "OK" -width 6 -default active \
-	    -command {destroy .about}]
-    pack $okBut -side right -anchor se -padx 0 -pady 0
-}
-
     label $f2.version -bd 0 -bg white -padx 10 -pady 0 -highlightthickness 0 \
 	    -text $::debugger::parameters(aboutCopyright) -justify left
     pack $f2.version -side top -anchor nw
@@ -137,12 +107,29 @@ if {0} {
     return .about
 }
 
+# Initialize the debugger library
+
 if {[catch {
 
     # This package require loads the debugger and system modules
     package require debugger
 
+    # Specify the additional debugger parameters.
+
+    set script_dir [file dirname [file norm [info script]]]
+    set about_gif $script_dir/images/about.gif
+    set logo_gif $script_dir/images/logo.gif
+
+    set parameters [list \
+                        aboutCmd [list ::TclProAboutBox $about_gif $logo_gif] \
+                        aboutCopyright "$::projectInfo::copyright\nVersion $::projectInfo::patchLevel" \
+                        appType local \
+                       ]
+
+    lappend parameters iconImage $script_dir/images/debugUnixIcon.gif
+
     debugger::init $argv $parameters
+
 } err]} {
     set f [toplevel .init_error]
     set l [label $f.label -text "Startup Error"]
@@ -154,6 +141,8 @@ if {[catch {
 	console show
     }
 }
+
+
 
 # Add the TclPro debugger extensions
 

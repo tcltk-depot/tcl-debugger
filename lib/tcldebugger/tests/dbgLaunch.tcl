@@ -17,8 +17,6 @@ set ::tcltest::testsDirectory [file dirname [pwd]]
 
 cd $::protest::sourceDirectory
 
-package require projectInfo
-
 namespace eval debugger {
     variable libdir [pwd]
     variable parameters
@@ -27,11 +25,11 @@ namespace eval debugger {
 	    aboutCopyright "testing" \
 	    appType local \
 	    iconImage "foo" \
-	    productName "$::projectInfo::productName Debugger"]
+	    productName "Debugger"]
 }
 
 foreach file {
-    dbg.tcl block.tcl break.tcl coverage.tcl system.tcl
+    projectInfo.tcl dbg.tcl block.tcl break.tcl coverage.tcl system.tcl
     instrument.tcl image.tcl pref.tcl proj.tcl location.tcl util.tcl
 } {
     source $file

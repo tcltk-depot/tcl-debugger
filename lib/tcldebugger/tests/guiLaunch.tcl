@@ -14,7 +14,6 @@ cd $::protest::sourceDirectory
 
 # Load the minimum set of files needed to get the debugger engine working.
 
-package require projectInfo
 package require cmdline
 
 namespace eval debugger {
@@ -26,7 +25,7 @@ namespace eval debugger {
 	    appType local \
 	    iconImage [expr {($::tcl_platform(platform) == "windows") \
 	        ? "foo" : [file join $libdir images/debugUnixIcon.gif]}]\
-	    productName "$::projectInfo::productName Debugger"]
+	    productName "Debugger"]
     
 }
 

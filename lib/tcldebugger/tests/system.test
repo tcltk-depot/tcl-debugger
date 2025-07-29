@@ -30,12 +30,10 @@ namespace eval system {
     }
 }
 
-package require projectInfo
-
 # Some tests in this file cannot run with a Debug exedir
 
-set tclTail $::projectInfo::executable(tclsh)
-set tkTail  $::projectInfo::executable(wish)
+set tclTail tclsh
+set tkTail  wish
 
 set tclExe [file exists [file join $::protest::executableDirectory \
 	"$tclTail$::system::exeString"]]

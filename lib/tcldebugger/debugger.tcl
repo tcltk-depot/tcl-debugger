@@ -14,11 +14,11 @@
 # implied loading order here.
 
 package require Tk
-package require projectInfo
 package require cmdline
 if {$::tcl_platform(platform) == "windows"} {
     package require registry
 }
+source [file join [file dirname [info script]] projectInfo.tcl]
 
 namespace eval debugger {
     if {[catch {package require tbcload}] == 1} {
