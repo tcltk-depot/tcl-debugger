@@ -914,6 +914,7 @@ proc guiUtil::positionWindow {win {defaultGeom {}}} {
 	# use the saved value.  Either use the default or nothing.
 
 	foreach {w h x y} {0 0 0 0} {}
+        ##nagelfar ignore
 	scan $geom "%dx%d+%d+%d" w h x y
 	set slop 10
 	set sw [expr {[winfo screenwidth $win]  - $slop}]
@@ -924,6 +925,7 @@ proc guiUtil::positionWindow {win {defaultGeom {}}} {
 		# Perform some sanity checking on the default value.
 
 		foreach {w h x y} {0 0 0 0} {}
+                ##nagelfar ignore
 		scan $defaultGeom "%dx%d+%d+%d" w h x y
 		if {$w > $sw} {
 		    set w $sw

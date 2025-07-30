@@ -359,7 +359,7 @@ namespace eval bind {
     # Code Windows that are common in all three.
 
     if { [string equal $::tcl_platform(platform) "windows"] } {
-	set mainKeyBindings [list \
+	variable mainKeyBindings [list \
 	    <<Proj_New>> <<Proj_Open>> <<Proj_Close>> <<Proj_Save>> \
 	    <<Proj_Settings>> <<Dbg_Open>> <<Dbg_Refresh>> <<Dbg_Exit>> \
 	    <<Dbg_Pref>> <<Dbg_Find>> <<Dbg_FindNext>> <<Dbg_Goto>> \
@@ -372,7 +372,7 @@ namespace eval bind {
     } else {
 	# On non-windows, there is no Tcl/Tk Help
 
-	set mainKeyBindings [list \
+	variable mainKeyBindings [list \
 	    <<Proj_New>> <<Proj_Open>> <<Proj_Close>> <<Proj_Save>> \
 	    <<Proj_Settings>> <<Dbg_Open>> <<Dbg_Refresh>> <<Dbg_Exit>> \
 	    <<Dbg_Pref>> <<Dbg_Find>> <<Dbg_FindNext>> <<Dbg_Goto>> \
@@ -383,6 +383,7 @@ namespace eval bind {
 	    <<Dbg_Proc>> <<Dbg_Watch>> <<Dbg_DataDisp>>]
     }
 
+    variable virtual
     foreach virtual $mainKeyBindings {
 	bind mainDbgWin $virtual "\
 		menu::accKeyPress $virtual; \
@@ -402,6 +403,7 @@ namespace eval bind {
     bind disableKeys <Key> {
 	break
     }
+    variable binding
     foreach binding [bind all] {
 	bind disableKeys $binding {continue}
     }

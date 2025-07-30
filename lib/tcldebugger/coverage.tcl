@@ -402,7 +402,7 @@ proc coverage::highlightRanges {blk} {
 	    # Construct a color by convertin <shade> to hex:
 	    # #<shade>00<shade>
 
-	    set shade [format "%x" $shade]
+	    set shade [format "%lx" $shade]
 	    $::code::codeWin tag configure "covered${intensity}" \
 		-background "\#${shade}00${shade}" -foreground white
 	}

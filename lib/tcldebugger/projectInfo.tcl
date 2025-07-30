@@ -31,7 +31,7 @@ namespace eval projectInfo {
     variable printCopyright 0
 
     # Copyright string - printed by all xmlserver apps.
-    set year [clock format [clock seconds] -format "%Y"]
+    variable year [clock format [clock seconds] -format "%Y"]
     variable copyright \
 	    {This is open source software.
 See the file "license.terms" for information
@@ -72,6 +72,7 @@ on usage and redistribution of this file.
 
     # This array holds the names of the executable files in each bin dir.
 
+    variable executable
     array set executable {
 	tclsh tclsh
 	wish wish
@@ -111,7 +112,7 @@ on usage and redistribution of this file.
     if {$::tcl_platform(platform) == "windows"} {
         set prefsRoot "HKEY_CURRENT_USER\\SOFTWARE\\Scriptics\\$productName"
     } else {
-        set prefsRoot [file join ~ .$productName]
+        set prefsRoot [file join [file home] .$productName]
     }
 
     # Values that contain various project related file extensions
@@ -147,25 +148,10 @@ on usage and redistribution of this file.
     variable helpFile
     array set helpFile [list tcl "" thisProduct ""]
 
-    set docDir [file join $installationDir doc]
-    if {$::tcl_platform(platform) == "windows"} {
-	# Use the help file if it exists.
-
-	set tmp [file join $docDir help "tcl$shortTclVers.hlp"]
-	if {[file exists $tmp]} {
-	    set helpFile(tcl) $tmp
-	}
-    }
-
+    variable docDir [file join $installationDir doc]
     set helpFile(tcl) https://www.tcl-lang.org/man/tcl[info tclversion]/
-    
-    set tmp [file join $docDir html index.html]
-    if {[file exists $tmp]} {
-	set helpFile(thisProduct) $tmp
-    } else {
-	set helpFile(thisProduct) \
-		https://www.tcl-lang.org/software/tclpro/doc/TclProUsersGuide14.pdf
-    }
+    set helpFile(thisProduct) \
+        https://www.tcl-lang.org/software/tclpro/doc/TclProUsersGuide14.pdf
 
 }
 

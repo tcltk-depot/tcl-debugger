@@ -1,3 +1,5 @@
+# The debugger package
+
 This repository contains the Tcl debugger component originally from the TclPro
 product open-sourced by Scriptics Corporation. It has been extracted from the
 [tcltk-depot TclProDebug](https://github.com/tcltk-depot/TclProDebug) repository
@@ -22,6 +24,7 @@ user's guide, which will appear as a PDF file in the user's default browser.
 The information in the chapter on the Debugger is still valid.
 
 Below is the relevant portion of the Flightaware README
+
 ```
 The debugger code has been upgraded to function with up-to-date releases of 
 Tcl/Tk (i.e., versions 8.5, 8.6):

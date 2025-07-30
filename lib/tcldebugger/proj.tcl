@@ -28,7 +28,7 @@ namespace eval proj {
 
     # The file types to use for all Project file dialogs.
 
-    set projFileTypes [list \
+    variable projFileTypes [list \
 	    [list "$::debugger::parameters(productName) Project Files" *$::proj::projFileExt] \
 	    [list "All files" *]]
 

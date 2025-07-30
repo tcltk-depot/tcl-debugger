@@ -34,7 +34,9 @@ namespace eval blk {
     #			used for showing uninstrumented code.
 
     variable blockCounter 0
+    variable blockFiles
     array set blockFiles {}
+    variable blkTemp
     array set blkTemp {file {} version 0 instrumented 0 script {} lines {}}
 }
 # end namespace blk

@@ -112,8 +112,8 @@ proc procWin::createWindow {} {
     # Create the text widget that displays all procs and the 
     # "Show Code" button.
 
-    set showChk  [checkbutton $mainFrm.showChk -variable procWin::showChkVar \
-	    -text "Show Uninstrumented Procs." -command procWin::updateWindow]
+    set showChk  [checkbutton $mainFrm.showChk -variable [namespace current]::showChkVar \
+            -text "Show Uninstrumented Procs." -command [namespace current]::updateWindow]
     set procText [text $mainFrm.procText -width 30 -height 5 \
 	    -yscroll [list $mainFrm.procText.sb set]]
     set sb [scrollbar $procText.sb -command [list $procText yview]]
