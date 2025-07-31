@@ -16,8 +16,8 @@ namespace eval projectInfo {
 
     variable companyName "Tcl Community"
     variable corporateName "Tcl Community"
-    variable companyUrl  "https://github.com/tcltk-depot/TclProDebug"
-    variable productName "TclPro"
+    variable companyUrl  "https://github.com/tcltk-depot/tcl-debugger"
+    variable productName "TclDebugger"
     variable usersGuide "$productName User's Guide"
 
     # Let's get our bearings!
@@ -110,7 +110,7 @@ on usage and redistribution of this file.
 
     variable prefsRoot {}
     if {$::tcl_platform(platform) == "windows"} {
-        set prefsRoot "HKEY_CURRENT_USER\\SOFTWARE\\Scriptics\\$productName"
+        set prefsRoot "HKEY_CURRENT_USER\\SOFTWARE\\Tcl\\$productName"
     } else {
         if {[package vcompare "9.0" [info tclversion]] <= 0} {
             set homeDir [file tildeexpand "~"]

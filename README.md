@@ -15,6 +15,10 @@ Changes with respect to the flightware repository include:
 packages. These need to be installed before running the debugger.
 - Working test suite
 
+To avoid conflict with co-installed old versions of the full TclProDebug
+suite, the name used for configuration in registry and files is now
+TclDebugger.
+
 To run: run the file `main.tcl` with `wish`.
 
 *Note: the starkit functionality for 8.6 probably needs fixing.*
