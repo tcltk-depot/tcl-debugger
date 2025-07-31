@@ -358,42 +358,35 @@ proc prefWin::createColorWindow {mainFrm} {
     set pad  6
     set pad2 10
 
-    set subFrm   [prefWin::createSubFrm $mainFrm colorFrm Colors]
+    set subFrm [prefWin::createSubFrm $mainFrm colorFrm Colors]
+
     set highLbl  [label $subFrm.highLbl -text "Highlight"]
-    set highFrm  [frame  $subFrm.highFrm -width 40 -height 20]
-    set highBut  [button $highFrm.highBut -bg [pref::prefGet highlight] \
-	     -bd 4 -command [list prefWin::chooseColor $highFrm.highBut \
-				highlight]]
-    pack propagate $highFrm 0
-    pack $highBut -fill both
+    set highFrm  [frame $subFrm.highFrm]
+    set highCol  [label $highFrm.highCol -width 10 -bg [pref::prefGet highlight] -relief sunken]
+    set highBut  [button $highFrm.highBut -text "Select ..." \
+                      -command [list prefWin::chooseColor $highFrm.highCol highlight]]
+    pack $highCol $highBut -fill both -side left
 
     set errorLbl [label $subFrm.errorLbl -text "Highlight On Error"]
-    set errorFrm [frame  $subFrm.errorFrm -width 40 -height 20]
-    set errorBut [button $errorFrm.errorBut -bd 4 \
-		      -bg [pref::prefGet highlight_error] \
-		      -command [list prefWin::chooseColor $errorFrm.errorBut \
-				   highlight_error]]
-    pack propagate $errorFrm 0
-    pack $errorBut -fill both
+    set errorFrm [frame  $subFrm.errorFrm]
+    set errorCol [label $errorFrm.errorCol -width 10 -bg [pref::prefGet highlight_error] -relief sunken]
+    set errorBut [button $errorFrm.errorBut -text "Select ..." \
+                      -command [list prefWin::chooseColor $errorFrm.errorCol highlight_error]]
+    pack $errorCol $errorBut -fill both -side left
 
     set cmdresultLbl [label $subFrm.cmdresultLbl -text "Highlight On Result"]
-    set cmdresultFrm [frame  $subFrm.cmdresultFrm -width 40 -height 20]
-    set cmdresultBut [button $cmdresultFrm.cmdresultBut -bd 4 \
-		      -bg [pref::prefGet highlight_cmdresult] \
-		      -command [list prefWin::chooseColor \
-		      $cmdresultFrm.cmdresultBut highlight_cmdresult]]
-    pack propagate $cmdresultFrm 0
-    pack $cmdresultBut -fill both
+    set cmdresultFrm [frame  $subFrm.cmdresultFrm]
+    set cmdresultCol [label $cmdresultFrm.cmdresultCol -width 10 -bg [pref::prefGet highlight_cmdresult] -relief sunken]
+    set cmdresultBut [button $cmdresultFrm.cmdresultBut -text "Select ..." \
+                          -command [list prefWin::chooseColor $cmdresultFrm.cmdresultCol highlight_cmdresult]]
+    pack $cmdresultCol $cmdresultBut -fill both -side left
 
-    grid $highLbl  -row 0 -column 0 -sticky w -padx $pad -pady $pad
-    grid $highFrm  -row 0 -column 1 -sticky w -pady $pad 
-    grid $errorLbl -row 0 -column 3 -sticky w -padx $pad -pady $pad
-    grid $errorFrm -row 0 -column 4 -sticky w -pady $pad
-    grid $cmdresultLbl -row 0 -column 6 -sticky w -padx $pad -pady $pad
-    grid $cmdresultFrm -row 0 -column 7 -sticky w -pady $pad
-    grid columnconfigure $subFrm 2 -minsize 20
-    grid columnconfigure $subFrm 5 -minsize 20
-    grid columnconfigure $subFrm 8 -weight 1
+    grid $highLbl      -row 0 -column 0 -sticky w -padx $pad -pady $pad
+    grid $highFrm      -row 0 -column 1 -sticky w -pady $pad 
+    grid $errorLbl     -row 1 -column 0 -sticky w -padx $pad -pady $pad
+    grid $errorFrm     -row 1 -column 1 -sticky w -pady $pad
+    grid $cmdresultLbl -row 2 -column 0 -sticky w -padx $pad -pady $pad
+    grid $cmdresultFrm -row 2 -column 1 -sticky w -pady $pad
 
     pack $subFrm -fill both -expand true -padx $pad -pady $pad2
 
