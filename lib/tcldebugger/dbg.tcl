@@ -152,32 +152,33 @@ proc dbg::start {application startDir script argList clientData} {
 	
 	# start up the application
 
-	if {$::tcl_platform(platform) == "windows"} {
-	    set args ""
-	    foreach arg [list \
-		    [file nativename [file join $libDir appLaunch.tcl]] \
-		    127.0.0.1 \
-		    $serverPort \
-		    [file nativename $script] \
-		    $clientData] {
-		if {([string length $arg] == 0) \
-			|| ([string first " " $arg] != -1)} {
-		    set quote 1
-		} else {
-		    set quote 0
-		}
-		regsub -all {(\\)*"} $arg {\1\1\\"} arg
-		if {$quote} {
-		    lappend args "\"$arg\""
-		} else {
-		    lappend args $arg
-		}
-	    }
-	    exec {*}[auto_execok start] [file nativename $application] {*}$args {*}$argList &
-	} else {
-	    set args ""
-	    # Ensure that the argument string is a valid Tcl list so we can
-	    # safely pass it through eval.
+        # Windows-specific code disabled. See https://github.com/tcltk-depot/tcl-debugger/issues/2
+	if {0 && $::tcl_platform(platform) == "windows"} {
+            set args ""
+            foreach arg [list \
+                             [file nativename [file join $libDir appLaunch.tcl]] \
+                             127.0.0.1 \
+                             $serverPort \
+                             [file nativename $script] \
+                             $clientData] {
+                if {([string length $arg] == 0) \
+                        || ([string first " " $arg] != -1)} {
+                    set quote 1
+                } else {
+                    set quote 0
+                }
+                regsub -all {(\\)*"} $arg {\1\1\\"} arg
+                if {$quote} {
+                    lappend args "\"$arg\""
+                } else {
+                    lappend args $arg
+                }
+            }
+            exec {*}[auto_execok start] [file nativename $application] {*}$args {*}$argList &
+        } else {
+            set args ""
+            # Ensure that the argument string is a valid Tcl list so we can
+            # safely pass it through eval.
 
 	    if {[catch {
 		foreach arg $argList {
@@ -194,12 +195,12 @@ proc dbg::start {application startDir script argList clientData} {
 		}
 	    }
 
-        set _argv [list 127.0.0.1 $serverPort $script $clientData {*}$args]
-        set _argc [llength $_argv]
-        lappend _input variable argc $_argc argv $_argv
-        set f [open [file join $libDir appLaunch.tcl]]
-        exec $application <<$_input\n[read $f] &
-        close $f
+            set _argv [list 127.0.0.1 $serverPort $script $clientData {*}$args]
+            set _argc [llength $_argv]
+            lappend _input variable argc $_argc argv $_argv
+            set f [open [file join $libDir appLaunch.tcl]]
+            exec $application <<$_input\n[read $f] &
+            close $f
 	}
     } msg]} {
 	# Make sure to restore the original directory before throwing 
