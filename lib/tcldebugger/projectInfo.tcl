@@ -112,7 +112,12 @@ on usage and redistribution of this file.
     if {$::tcl_platform(platform) == "windows"} {
         set prefsRoot "HKEY_CURRENT_USER\\SOFTWARE\\Scriptics\\$productName"
     } else {
-        set prefsRoot [file join [file home] .$productName]
+        if {[package vcompare "9.0" [info tclversion]] <= 0} {
+            set homeDir [file tildeexpand "~"]
+        } else {
+            set homeDir "~"
+        }
+        set prefsRoot [file join $homeDir .$productName]
     }
 
     # Values that contain various project related file extensions
